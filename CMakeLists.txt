@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 3.5)
 
 project(TwoNote LANGUAGES CXX)
 
+
+# set(QT_MIN_VERSION "5.3.0")
+# set(KF5_MIN_VERSION "5.2.0")
+
+
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_AUTOUIC ON)
@@ -11,35 +16,58 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# QtCreator supports the following variables for Android, which are identical to qmake Android variables.
-# Check http://doc.qt.io/qt-5/deployment-android.html for more information.
-# They need to be set before the find_package(Qt5 ...) call.
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-#if(ANDROID)
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-#    if (ANDROID_ABI STREQUAL "armeabi-v7a")
-#        set(ANDROID_EXTRA_LIBS
-#            ${CMAKE_CURRENT_SOURCE_DIR}/path/to/libcrypto.so
-#            ${CMAKE_CURRENT_SOURCE_DIR}/path/to/libssl.so)
-#    endif()
-#endif()
+find_package(ECM REQUIRED NO_MODULE)
+set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
 
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
+include(KDEInstallDirs)
+include(KDECMakeSettings)
+include(KDECompilerSettings NO_POLICY_SCOPE)
+include(FeatureSummary)
 
-if(ANDROID)
-  add_library(TwoNote SHARED
-    main.cpp
-    mainwindow.cpp
-    mainwindow.h
-    mainwindow.ui
+# Find Qt modules
+find_package(Qt5 CONFIG REQUIRED COMPONENTS
+  Core    # QCommandLineParser, QStringLiteral
+  Widgets # QApplication
   )
-else()
-  add_executable(TwoNote
-    main.cpp
-    mainwindow.cpp
-    mainwindow.h
-    mainwindow.ui
-  )
-endif()
 
-target_link_libraries(TwoNote PRIVATE Qt5::Widgets)
+# Find KDE modules
+find_package(KF5 REQUIRED COMPONENTS
+  CoreAddons      # KAboutData
+  I18n            # KLocalizedString
+  WidgetsAddons   # KMessageBox
+  )
+
+
+
+
+unset (TwoNote_SOURCES)
+file (GLOB_RECURSE TwoNote_SOURCES
+  src/gui/*.cpp
+  src/gui/*.h
+  src/gui/*.ui
+  src/main.cpp
+  )
+
+
+set(QT_LIBRARY
+  Qt5::Widgets
+  KF5::CoreAddons
+  KF5::I18n
+  KF5::WidgetsAddons
+  )
+
+add_executable(${PROJECT_NAME}
+  ${TwoNote_SOURCES}
+  )
+
+target_link_libraries(${PROJECT_NAME} PRIVATE ${QT_LIBRARY})
+
+target_include_directories(${PROJECT_NAME} PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/src
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/gui
+  ${CMAKE_BINARY_DIR})
