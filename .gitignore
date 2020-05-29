@@ -76,4 +76,17 @@ CMakeCache.txt
 Makefile
 cmake_install.cmake
 compile_commands.json
+#Qt Creator generated
+CMakeLists.txt.user
+
+# builds
 build/
+cmake-build-debug/
+
+# editor configs
+.idea
+.vscode
+.dir-locals.el
+
+# ccls cache
+.ccls-cache
