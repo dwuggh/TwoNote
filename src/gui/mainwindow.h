@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include "drawboardwidget.h"
+// #include "scratchwidget.h"
+#include "ScratchScene.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
