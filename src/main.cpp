@@ -27,9 +27,9 @@ int main(int argc, char *argv[]) {
       // The bug report email address
       // (bugsEmailAddress = QLatin1String("submit@bugs.kde.org")
       QStringLiteral("submit@bugs.kde.org"));
-  aboutData.addAuthor(i18n("dwuggh"), i18n("dwuggh"),
+  aboutData.addAuthor(i18n("someone"), i18n("sometask"),
                       QStringLiteral("dwuggh@gmail.com"),
-                      QStringLiteral("https://dwuggh.club"),
+                      QStringLiteral("https://www.google.com"),
                       QStringLiteral("OSC Username"));
   KAboutData::setApplicationData(aboutData);
   MainWindow w;
