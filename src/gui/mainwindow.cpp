@@ -8,9 +8,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     // setCentralWidget(new DrawBoardWidget(this));
     // setCentralWidget(new ScratchWidget(this));
-    QGraphicsView* view = new QGraphicsView(this);
-    ScratchScene* scene = new ScratchScene(view);
-    view->setScene(scene);
+    ScratchView* view = new ScratchView(this);
+    // ScratchScene* scene = new ScratchScene(view);
+    // view->setScene(scene);
     // scene->addRect(QRectF(1, 1, 0, 50));
 
     setCentralWidget(view);

@@ -23,22 +23,26 @@
 
 class ScratchScene : public QGraphicsScene {
 
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  ScratchScene(QWidget *parent = nullptr);
+    ScratchScene(QWidget *parent = nullptr);
+
+    void setPen(QColor color = QColor(Qt::black), qreal width = 3.0);
 
 protected:
-  void mousePressEvent(QGraphicsSceneMouseEvent *);
-  void mouseMoveEvent(QGraphicsSceneMouseEvent *);
-  void mouseReleaseEvent(QGraphicsSceneMouseEvent *);
+    void mousePressEvent(QGraphicsSceneMouseEvent *) override;
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *) override;
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *) override;
 
 private:
-  QPen pen;
-  QGraphicsScene scene;
-  QPointF currentPoint;
-  QPointF lastPoint;
-  bool isDrawing;
+    QPen pen;
+    qreal penWidth;
+    QColor color;
+    QGraphicsScene scene;
+    QPointF currentPoint;
+    QPointF lastPoint;
+    bool isDrawing;
 };
 
 #endif

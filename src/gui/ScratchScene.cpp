@@ -2,12 +2,16 @@
 
 ScratchScene::ScratchScene(QWidget* parent) : QGraphicsScene(parent) {
     isDrawing = false;
-    // pen = QPen(Qt::black, 1.0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-    // set pen's property
     // TODO width and color should be customizeable
     pen = QPen();
-    pen.setWidth(5.0);
-    pen.setColor(QColor(Qt::black));
+    this->setPen();
+}
+
+void ScratchScene::setPen(QColor color, qreal width) {
+    this->color = color;
+    this->penWidth = width;
+    pen.setColor(color);
+    pen.setWidthF(width);
 }
 
 void ScratchScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
@@ -33,8 +37,5 @@ void ScratchScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
 void ScratchScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     if (event->button() == Qt::LeftButton && isDrawing) {
         isDrawing = false;
-        // lastPoint = currentPoint;
-        // currentPoint = event->pos();
-        // this->addLine(QLineF(lastPoint, currentPoint), pen);
     }
 }
