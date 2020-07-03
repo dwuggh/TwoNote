@@ -35,11 +35,11 @@ find_package(Qt5 CONFIG REQUIRED COMPONENTS
   )
 
 # Find KDE modules
-find_package(KF5 REQUIRED COMPONENTS
-  CoreAddons      # KAboutData
-  I18n            # KLocalizedString
-  WidgetsAddons   # KMessageBox
-  )
+# find_package(KF5 REQUIRED COMPONENTS
+#   CoreAddons      # KAboutData
+#   I18n            # KLocalizedString
+#   WidgetsAddons   # KMessageBox
+#   )
 
 
 
@@ -55,9 +55,10 @@ file (GLOB_RECURSE TwoNote_SOURCES
 
 set(QT_LIBRARY
   Qt5::Widgets
-  KF5::CoreAddons
-  KF5::I18n
-  KF5::WidgetsAddons
+  Qt5::Core
+  # KF5::CoreAddons
+  # KF5::I18n
+  # KF5::WidgetsAddons
   )
 
 add_executable(${PROJECT_NAME}

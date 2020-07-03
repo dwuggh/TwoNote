@@ -28,7 +28,7 @@ class ScratchScene : public QGraphicsScene {
 public:
     ScratchScene(QWidget *parent = nullptr);
 
-    void setPen(QColor color = QColor(Qt::black), qreal width = 3.0);
+    void setPen(QColor color = QColor(Qt::black), qreal width = 2.0);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *) override;

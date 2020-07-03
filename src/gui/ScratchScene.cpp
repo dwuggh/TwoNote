@@ -5,6 +5,7 @@ ScratchScene::ScratchScene(QWidget* parent) : QGraphicsScene(parent) {
     // TODO width and color should be customizeable
     pen = QPen();
     this->setPen();
+
 }
 
 void ScratchScene::setPen(QColor color, qreal width) {
@@ -27,7 +28,7 @@ void ScratchScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
         lastPoint = currentPoint;
         currentPoint = event->scenePos();
         // std::cout << event->scenePos().x() << ' ' << event->scenePos().y() << std::endl;
-        std::cout << lastPoint.x() << std::endl;
+        // std::cout << lastPoint.x() << std::endl;
         this->addLine(QLineF(lastPoint, currentPoint), pen);
 
         // this->update();
