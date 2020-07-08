@@ -2,7 +2,6 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "drawboardwidget.h"
 #include "ScratchScene.h"
 
 QT_BEGIN_NAMESPACE

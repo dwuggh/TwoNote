@@ -43,6 +43,8 @@ private:
     QPointF currentPoint;
     QPointF lastPoint;
     bool isDrawing;
+
+    void drawLine(QPointF, QPointF);
 };
 
 #endif
