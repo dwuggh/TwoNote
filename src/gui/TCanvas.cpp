@@ -4,35 +4,54 @@
 
 #include "TCanvas.h"
 
-TCanvas::TCanvas(QWidget* parent) : QWidget(parent) {
+TCanvas::TCanvas(QWidget* parent) : QGraphicsScene(parent) {
     isDrawing = false;
     lineShapes = QList<LineShape>();
+    pen = QPen();
+    pen.setColor(Qt::black);
+    pen.setJoinStyle(Qt::RoundJoin);
+    pen.setWidthF(3.0);
 }
 
-void TCanvas::mousePressEvent(QMouseEvent *event) {
+void TCanvas::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     if (event->button() == Qt::LeftButton) {
         isDrawing = true;
-        currentPoint = event->pos();
+        currentPoint = event->scenePos();
+	lastPoint = event->scenePos();
         currentLine = LineShape();
         currentLine.append(currentPoint);
     }
-    this->update();
+    // qDebug() << event->scenePos();
+    currentPath = QPainterPath();
+    currentPath.moveTo(currentPoint);
+    currentPathItem = this->addPath(currentPath, pen);
+    currentPathItem->setPen(pen);
+    qDebug() << this->sceneRect();
+    // qDebug() << currentPath;
 }
 
-void TCanvas::mouseMoveEvent(QMouseEvent *event) {
+void TCanvas::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
     if (event->buttons() & Qt::LeftButton) {
-        currentPoint = event->pos();
+	lastPoint = currentPoint;
+        currentPoint = event->scenePos();
         currentLine.append(currentPoint);
     }
-    this->update();
+    currentPath.quadTo(lastPoint, currentPoint);
+    // this->addPath(currentPath, pen);
+    currentPathItem->setPath(currentPath);
+    // qDebug() << currentPath;
+    // this->addPath(currentPath);
+    // this->update();
 }
 
-void TCanvas::mouseReleaseEvent(QMouseEvent *event) {
+void TCanvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     if (event->button() == Qt::LeftButton && isDrawing) {
         isDrawing = false;
     }
     lineShapes.append(currentLine);
-    this->update();
+    // this->update();
+    // this->addPath(currentPath);
+    // qDebug() << currentPath;
 }
 
 void TCanvas::paintLine(QPainter &painter, QList<QPointF> linePoints) {
@@ -46,24 +65,28 @@ void TCanvas::paintLine(QPainter &painter, QList<QPointF> linePoints) {
 	linePaths.quadTo(linePoints[i], linePoints[i+1]);
     }
 
-    painter.drawPath(linePaths);
+    // painter.drawPath(linePaths);
 }
 
-void TCanvas::paintEvent(QPaintEvent *) {
-    QPainter painter(this);
-    painter.setRenderHints(
-              QPainter::Antialiasing
-            | QPainter::HighQualityAntialiasing
-            | QPainter::SmoothPixmapTransform
-            );
+void TCanvas::wheelEvent(QGraphicsSceneWheelEvent *event) {
+    qreal delta_y = event->delta() * 0.1;
+    // this->update(QRectF());
+}
+// void TCanvas::paintEvent(QPaintEvent *) {
+//     QPainter painter(this);
+//     painter.setRenderHints(
+//               QPainter::Antialiasing
+//             | QPainter::HighQualityAntialiasing
+//             | QPainter::SmoothPixmapTransform
+//             );
 
-   for (auto line: this->lineShapes) {
-       qDebug() << line;
-       line.quadPaintLine(painter);
-   }
-   if (this->isDrawing) {
-       qDebug() << currentLine;
-       currentLine.quadPaintLine(painter);
-   }
+//    for (auto line: this->lineShapes) {
+//        qDebug() << line;
+//        line.quadPaintLine(painter);
+//    }
+//    if (this->isDrawing) {
+//        qDebug() << currentLine;
+//        currentLine.quadPaintLine(painter);
+//    }
 //    paintLine(painter, this->currentLine.points);
-}
+// }

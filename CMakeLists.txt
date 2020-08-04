@@ -46,12 +46,12 @@ find_package(Qt5 CONFIG REQUIRED COMPONENTS
 
 unset (TwoNote_SOURCES)
 file (GLOB_RECURSE TwoNote_SOURCES
-        src/utils/*.h
-        src/utils/*.cpp
-  src/gui/ScratchScene.h
-  src/gui/ScratchScene.cpp
+  src/utils/*.h
+  src/utils/*.cpp
   src/gui/TCanvas.h
   src/gui/TCanvas.cpp
+  src/gui/TView.h
+  src/gui/TView.cpp
   src/gui/mainwindow.ui
   src/gui/mainwindow.h
   src/gui/mainwindow.cpp
