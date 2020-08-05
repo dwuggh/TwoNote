@@ -15,6 +15,9 @@
 #include <QPainterPath>
 #include "utils/LineShape.h"
 #include <QDebug>
+#include <QDataStream>
+#include <QFile>
+#include <QToolButton>
 
 
 class TCanvas : public QGraphicsScene {
@@ -23,6 +26,12 @@ Q_OBJECT
 
 public:
     explicit TCanvas(QWidget *parent = nullptr);
+    QToolButton *saveButton;
+    QToolButton *loadButton;
+
+public slots:
+    void save();
+    void load();
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *) override;
@@ -31,7 +40,8 @@ protected:
     void wheelEvent(QGraphicsSceneWheelEvent *) override;
     // void paintEvent(QPaintEvent *) override;
 private:
-    LineShapes lineShapes;
+    QFile file;
+    LineShapes* lineShapes;
     LineShape currentLine;
     bool isDrawing = false;
     QPointF currentPoint;
@@ -39,7 +49,7 @@ private:
     QPainterPath currentPath;
     QGraphicsPathItem* currentPathItem;
     QPen pen;
-    void paintLine(QPainter &painter, QList<QPointF> linePoints);
+    void paintLines();
 };
 
 

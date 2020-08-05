@@ -6,11 +6,45 @@
 
 TCanvas::TCanvas(QWidget* parent) : QGraphicsScene(parent) {
     isDrawing = false;
-    lineShapes = QList<LineShape>();
+    lineShapes = new LineShapes;
     pen = QPen();
     pen.setColor(Qt::black);
     pen.setJoinStyle(Qt::RoundJoin);
     pen.setWidthF(3.0);
+    // file util
+    // file.setObjectName(QString("test"));
+    file.setFileName("test.tnote");
+    // this->lineShapes = new LineShapes;
+    // file.open();
+    saveButton = new QToolButton;
+    saveButton->setText(tr("save"));
+    saveButton->setCheckable(true);
+    saveButton->setChecked(false);
+    loadButton = new QToolButton;
+    loadButton->setText(tr("load"));
+    loadButton->setCheckable(true);
+    loadButton->setChecked(false);
+    connect(saveButton, &QAbstractButton::toggled, this, &TCanvas::save);
+    connect(loadButton, &QAbstractButton::toggled, this, &TCanvas::load);
+}
+
+void TCanvas::save() {
+    file.open(QIODevice::WriteOnly);
+    QDataStream out(&file);
+    // const LineShapes ls = this->lineShapes;
+    out << this->lineShapes;
+    file.close();
+}
+
+void TCanvas::load() {
+    file.open(QIODevice::ReadOnly);
+    QDataStream in(&file);
+    
+    delete this->lineShapes;
+    this->lineShapes = new LineShapes();
+    in >> *this->lineShapes;
+    file.close();
+    this->paintLines();
 }
 
 void TCanvas::mousePressEvent(QGraphicsSceneMouseEvent *event) {
@@ -18,14 +52,14 @@ void TCanvas::mousePressEvent(QGraphicsSceneMouseEvent *event) {
         isDrawing = true;
         currentPoint = event->scenePos();
 	lastPoint = event->scenePos();
-        currentLine = LineShape();
+        currentLine = LineShape(pen.widthF(), pen.color());
         currentLine.append(currentPoint);
+        currentPath = QPainterPath();
+        currentPath.moveTo(currentPoint);
+        currentPathItem = this->addPath(currentPath, pen);
+        currentPathItem->setPen(pen);
+        // qDebug() << this->sceneRect();
     }
-    currentPath = QPainterPath();
-    currentPath.moveTo(currentPoint);
-    currentPathItem = this->addPath(currentPath, pen);
-    currentPathItem->setPen(pen);
-    qDebug() << this->sceneRect();
 }
 
 void TCanvas::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
@@ -33,28 +67,33 @@ void TCanvas::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
 	lastPoint = currentPoint;
         currentPoint = event->scenePos();
         currentLine.append(currentPoint);
+        currentPath.quadTo(lastPoint, currentPoint);
+        currentPathItem->setPath(currentPath);
     }
-    currentPath.quadTo(lastPoint, currentPoint);
-    currentPathItem->setPath(currentPath);
 }
 
 void TCanvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     if (event->button() == Qt::LeftButton && isDrawing) {
         isDrawing = false;
+        lineShapes->append(currentLine);
+        qDebug() << currentLine;
     }
-    lineShapes.append(currentLine);
-    qDebug() << currentPath;
 }
 
-void TCanvas::paintLine(QPainter &painter, QList<QPointF> linePoints) {
-    QPainterPath linePaths;
-    if (linePoints.length() >= 1) {
-	linePaths.moveTo(linePoints[0]);
-    }
-    else return;
+void TCanvas::paintLines() {
+    this->clear();
 
-    for (int i = 1; i < linePoints.length() - 2; i ++) {
-	linePaths.quadTo(linePoints[i], linePoints[i+1]);
+    for (auto line: *this->lineShapes) {
+	pen = QPen();
+	pen.setColor(line.color);
+	pen.setWidthF(line.width);
+	currentPath = QPainterPath();
+	auto points = line.points;
+	currentPath.moveTo(points[0]);
+	for (int i = 1; i <points.length() - 2; i++) {
+	    currentPath.quadTo(points[i], points[i + 1]);
+	}
+	this->addPath(currentPath, pen);
     }
 
 }

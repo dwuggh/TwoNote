@@ -54,11 +54,12 @@ QDebug operator<<(QDebug argument, const LineShape &obj) {
 }
 
 QDataStream &operator>>(QDataStream &in, LineShape &obj) {
-    in >> obj.points >> obj.color >> obj.width;
+    // in >> obj.points >> obj.color >> obj.width;
+    in >> obj.width >> obj.color >> obj.points;
     return in;
 }
 
-QDataStream &operator<<(QDataStream &out, LineShape &obj) {
+QDataStream &operator<<(QDataStream &out, const LineShape &obj) {
     out << obj.width << obj.color << obj.points;
     return out;
 }

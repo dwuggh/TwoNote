@@ -41,6 +41,8 @@ MainWindow::MainWindow(QWidget *parent)
     view->show();
     toolbar->addWidget(view->drawModeButton);
     toolbar->addWidget(view->dragModeButton);
+    toolbar->addWidget(scene->saveButton);
+    toolbar->addWidget(scene->loadButton);
     // connect(view->drawModeButton, &QAbstractButton::toggled, this, &TView::enableDrawMode);
     // connect(view->dragModeButton, &QAbstractButton::toggled, this, &TView::enableDragMode);
     //    ScratchScene* scene = new ScratchScene(view);

@@ -28,7 +28,7 @@ public:
 
     friend QDebug operator<<(QDebug argument, const LineShape &obj);
     friend QDataStream &operator>>(QDataStream &in, LineShape &obj);
-    friend QDataStream &operator<<(QDataStream &out, LineShape &obj);
+    friend QDataStream &operator<<(QDataStream &out, const LineShape &obj);
 private:
     QPen pen;
     void setPen();
