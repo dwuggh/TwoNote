@@ -20,12 +20,13 @@ public:
     QToolButton *drawModeButton;
     QToolButton *dragModeButton;
     
+public slots:
+    void enableDragMode(bool checked);
+    void enableDrawMode(bool checked);
+
 protected:
     void wheelEvent(QWheelEvent *) override;
 
-private slots:
-    void enableDragMode(bool checked);
-    void enableDrawMode(bool checked);
 	
     
 	

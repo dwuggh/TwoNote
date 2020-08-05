@@ -25,7 +25,7 @@ private:
     QMenuBar* menubar;
     QToolBar* toolbar;
     QToolButton* drawModeButton;
-    QToolButton* selectModeButton;
+    QToolButton* dragModeButton;
     
 };
 #endif // MAINWINDOW_H

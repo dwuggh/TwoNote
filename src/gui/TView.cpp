@@ -11,17 +11,17 @@ TView::TView(QWidget* parent) : QGraphicsView(parent) {
     this->resize(res_width, res_height);
     this->centerOn(0, 0);
 
-    drawModeButton = new QToolButton;
-    drawModeButton->setText(tr("draw"));
-    drawModeButton->setCheckable(true);
-    drawModeButton->setChecked(true);
-    dragModeButton = new QToolButton;
-    dragModeButton->setText(tr("drag"));
-    dragModeButton->setCheckable(true);
-    dragModeButton->setChecked(false);
+    // drawModeButton = new QToolButton;
+    // drawModeButton->setText(tr("draw"));
+    // drawModeButton->setCheckable(true);
+    // drawModeButton->setChecked(true);
+    // dragModeButton = new QToolButton;
+    // dragModeButton->setText(tr("drag"));
+    // dragModeButton->setCheckable(true);
+    // dragModeButton->setChecked(false);
     
-    connect(drawModeButton, &QAbstractButton::toggled, this, &TView::enableDrawMode);
-    connect(dragModeButton, &QAbstractButton::toggled, this, &TView::enableDragMode);
+    // connect(drawModeButton, &QAbstractButton::toggled, this, &TView::enableDrawMode);
+    // connect(dragModeButton, &QAbstractButton::toggled, this, &TView::enableDragMode);
 }
 
 void TView::wheelEvent(QWheelEvent *event) {
