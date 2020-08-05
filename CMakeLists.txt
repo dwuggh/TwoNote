@@ -23,10 +23,10 @@ set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
-include(KDEInstallDirs)
-include(KDECMakeSettings)
-include(KDECompilerSettings NO_POLICY_SCOPE)
-include(FeatureSummary)
+# include(KDEInstallDirs)
+# include(KDECMakeSettings)
+# include(KDECompilerSettings NO_POLICY_SCOPE)
+# include(FeatureSummary)
 
 # Find Qt modules
 find_package(Qt5 CONFIG REQUIRED COMPONENTS
@@ -52,9 +52,9 @@ file (GLOB_RECURSE TwoNote_SOURCES
   src/gui/TCanvas.cpp
   src/gui/TView.h
   src/gui/TView.cpp
-  src/gui/mainwindow.ui
-  src/gui/mainwindow.h
-  src/gui/mainwindow.cpp
+  src/mainwindow.ui
+  src/mainwindow.h
+  src/mainwindow.cpp
   src/main.cpp
   )
 

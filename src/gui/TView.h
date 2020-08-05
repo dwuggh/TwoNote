@@ -7,6 +7,7 @@
 #include <QWheelEvent>
 #include <QDebug>
 #include <QOpenGLWidget>
+#include <QtWidgets>
 
 class TView : public QGraphicsView {
 
@@ -16,9 +17,17 @@ public:
     explicit TView(QWidget *parent = nullptr);
     int res_height = 1920;
     int res_width = 1080;
+    QToolButton *drawModeButton;
+    QToolButton *dragModeButton;
     
 protected:
- void wheelEvent(QWheelEvent *) override;
+    void wheelEvent(QWheelEvent *) override;
+
+private slots:
+    void enableDragMode(bool checked);
+    void enableDrawMode(bool checked);
+	
+    
 	
 };
 

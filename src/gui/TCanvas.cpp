@@ -21,13 +21,11 @@ void TCanvas::mousePressEvent(QGraphicsSceneMouseEvent *event) {
         currentLine = LineShape();
         currentLine.append(currentPoint);
     }
-    // qDebug() << event->scenePos();
     currentPath = QPainterPath();
     currentPath.moveTo(currentPoint);
     currentPathItem = this->addPath(currentPath, pen);
     currentPathItem->setPen(pen);
     qDebug() << this->sceneRect();
-    // qDebug() << currentPath;
 }
 
 void TCanvas::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
@@ -37,11 +35,7 @@ void TCanvas::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
         currentLine.append(currentPoint);
     }
     currentPath.quadTo(lastPoint, currentPoint);
-    // this->addPath(currentPath, pen);
     currentPathItem->setPath(currentPath);
-    // qDebug() << currentPath;
-    // this->addPath(currentPath);
-    // this->update();
 }
 
 void TCanvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
@@ -49,9 +43,7 @@ void TCanvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
         isDrawing = false;
     }
     lineShapes.append(currentLine);
-    // this->update();
-    // this->addPath(currentPath);
-    // qDebug() << currentPath;
+    qDebug() << currentPath;
 }
 
 void TCanvas::paintLine(QPainter &painter, QList<QPointF> linePoints) {
@@ -65,28 +57,9 @@ void TCanvas::paintLine(QPainter &painter, QList<QPointF> linePoints) {
 	linePaths.quadTo(linePoints[i], linePoints[i+1]);
     }
 
-    // painter.drawPath(linePaths);
 }
 
 void TCanvas::wheelEvent(QGraphicsSceneWheelEvent *event) {
     qreal delta_y = event->delta() * 0.1;
     // this->update(QRectF());
 }
-// void TCanvas::paintEvent(QPaintEvent *) {
-//     QPainter painter(this);
-//     painter.setRenderHints(
-//               QPainter::Antialiasing
-//             | QPainter::HighQualityAntialiasing
-//             | QPainter::SmoothPixmapTransform
-//             );
-
-//    for (auto line: this->lineShapes) {
-//        qDebug() << line;
-//        line.quadPaintLine(painter);
-//    }
-//    if (this->isDrawing) {
-//        qDebug() << currentLine;
-//        currentLine.quadPaintLine(painter);
-//    }
-//    paintLine(painter, this->currentLine.points);
-// }

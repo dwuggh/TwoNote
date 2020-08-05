@@ -2,8 +2,11 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "ScratchScene.h"
 #include "TCanvas.h"
+#include <QOpenGLWidget>
+#include "TView.h"
+#include <QScrollBar>
+#include <QtWidgets>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -19,5 +22,10 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    QMenuBar* menubar;
+    QToolBar* toolbar;
+    QToolButton* drawModeButton;
+    QToolButton* selectModeButton;
+    
 };
 #endif // MAINWINDOW_H
