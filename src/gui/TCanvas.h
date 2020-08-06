@@ -17,7 +17,7 @@
 #include <QDebug>
 #include <QDataStream>
 #include <QFile>
-#include <QToolButton>
+#include <QAction>
 
 
 class TCanvas : public QGraphicsScene {
@@ -26,8 +26,8 @@ Q_OBJECT
 
 public:
     explicit TCanvas(QWidget *parent = nullptr);
-    QToolButton *saveButton;
-    QToolButton *loadButton;
+    QAction *saveAction;
+    QAction *loadAction;
 
 public slots:
     void save();

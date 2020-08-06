@@ -16,24 +16,25 @@ TCanvas::TCanvas(QWidget* parent) : QGraphicsScene(parent) {
     file.setFileName("test.tnote");
     // this->lineShapes = new LineShapes;
     // file.open();
-    saveButton = new QToolButton;
-    saveButton->setText(tr("save"));
-    saveButton->setCheckable(true);
-    saveButton->setChecked(false);
-    loadButton = new QToolButton;
-    loadButton->setText(tr("load"));
-    loadButton->setCheckable(true);
-    loadButton->setChecked(false);
-    connect(saveButton, &QAbstractButton::toggled, this, &TCanvas::save);
-    connect(loadButton, &QAbstractButton::toggled, this, &TCanvas::load);
+    saveAction = new QAction;
+    saveAction->setText(tr("save"));
+    saveAction->setCheckable(false);
+    saveAction->setChecked(false);
+    loadAction = new QAction;
+    loadAction->setText(tr("load"));
+    loadAction->setCheckable(false);
+    loadAction->setChecked(false);
+    connect(saveAction, &QAction::triggered, this, &TCanvas::save);
+    connect(loadAction, &QAction::triggered, this, &TCanvas::load);
 }
 
 void TCanvas::save() {
     file.open(QIODevice::WriteOnly);
     QDataStream out(&file);
     // const LineShapes ls = this->lineShapes;
-    out << this->lineShapes;
+    out << *this->lineShapes;
     file.close();
+    // this->saveButton->setChecked(false);
 }
 
 void TCanvas::load() {
@@ -45,6 +46,7 @@ void TCanvas::load() {
     in >> *this->lineShapes;
     file.close();
     this->paintLines();
+    // this->loadButton->setChecked(false);
 }
 
 void TCanvas::mousePressEvent(QGraphicsSceneMouseEvent *event) {

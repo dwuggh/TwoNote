@@ -19,13 +19,19 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow() override;
+    int width = 1920;
+    int height = 1080;
 
 private:
     Ui::MainWindow *ui;
     QMenuBar* menubar;
     QToolBar* toolbar;
-    QToolButton* drawModeButton;
-    QToolButton* dragModeButton;
+    TView* view;
+    TCanvas* scene;
+
+    void setupMenu();
+    void setupToolbar();
+    void setupCanvas();
     
 };
 #endif // MAINWINDOW_H

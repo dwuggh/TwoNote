@@ -6,54 +6,57 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     // ui->setupUi(this);
-    // setCentralWidget(new DrawBoardWidget(this));
-    // setCentralWidget(new ScratchWidget(this));
-    // setCentralWidget(new TCanvas(this));
 
+    // this->showFullScreen();
+    this->showMaximized();
+
+    this->setupCanvas();
+    this->setupToolbar();
+    this->setupMenu();
+    
+
+}
+
+void MainWindow::setupCanvas() {
+    
+    view = new TView(this);
+    scene = new TCanvas(view);
+    view->setScene(scene);
+    scene->setSceneRect(QRectF(-width / 2, height / 2, width, height));
+    setCentralWidget(view);
+    view->show();
+}
+
+void MainWindow::setupMenu() {
     menubar = new QMenuBar(this);
-    menubar->setObjectName(QString::fromUtf8("menubar"));
+    menubar->setObjectName("menubar");
     menubar->setGeometry(QRect(0, 0, 720, 30));
     this->setMenuBar(menubar);
 
+    QMenu* file = new QMenu(menubar);
+    file->setObjectName("file");
+    file->setTitle("file");
+
+    file->addAction(scene->saveAction);
+    file->addAction(scene->loadAction);
+
+    menubar->addMenu(file);
+
+    QMenu* preference = new QMenu(menubar);
+    
+}
+
+void MainWindow::setupToolbar() {
+    
     toolbar = new QToolBar;
     toolbar->setObjectName(QString::fromUtf8("toolbar"));
-    toolbar->setGeometry(QRect(0, 0, 720, 30));
+    toolbar->setGeometry(QRect(0, -30, 720, 30));
     this->addToolBar(toolbar);
-    
-    // drawModeButton = new QToolButton;
-    // drawModeButton->setText(tr("draw"));
-    // drawModeButton->setCheckable(true);
-    // drawModeButton->setChecked(true);
-    // dragModeButton = new QToolButton;
-    // dragModeButton->setText(tr("drag"));
-    // dragModeButton->setCheckable(true);
-    // dragModeButton->setChecked(false);
-    
-    
-    // this->setStatusBar(new QStatusBar(this));
-
-    this->resize(1920, 1080);
-    TView *view = new TView(this);
-    TCanvas *scene = new TCanvas(view);
-    view->setScene(scene);
-    setCentralWidget(view);
-    scene->setSceneRect(QRectF(-1920 / 2, 1080 / 2, 1920, 1080));
-    view->show();
-    toolbar->addWidget(view->drawModeButton);
-    toolbar->addWidget(view->dragModeButton);
-    toolbar->addWidget(scene->saveButton);
-    toolbar->addWidget(scene->loadButton);
-    // connect(view->drawModeButton, &QAbstractButton::toggled, this, &TView::enableDrawMode);
-    // connect(view->dragModeButton, &QAbstractButton::toggled, this, &TView::enableDragMode);
-    //    ScratchScene* scene = new ScratchScene(view);
-    //    // scene->addRect(QRectF(0, 0, 100, 100));
-    //    view->setScene(scene);
-    // scene->addRect(QRectF(1, 1, 0, 50));
-
+    toolbar->addAction(view->drawModeAction);
+    toolbar->addAction(view->dragModeAction);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
-

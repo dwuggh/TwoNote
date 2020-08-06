@@ -11,17 +11,17 @@ TView::TView(QWidget* parent) : QGraphicsView(parent) {
     this->resize(res_width, res_height);
     this->centerOn(0, 0);
 
-    drawModeButton = new QToolButton;
-    drawModeButton->setText(tr("draw"));
-    drawModeButton->setCheckable(true);
-    drawModeButton->setChecked(true);
-    dragModeButton = new QToolButton;
-    dragModeButton->setText(tr("drag"));
-    dragModeButton->setCheckable(true);
-    dragModeButton->setChecked(false);
+    drawModeAction = new QAction;
+    drawModeAction->setText(tr("draw"));
+    drawModeAction->setCheckable(true);
+    drawModeAction->setChecked(true);
+    dragModeAction = new QAction;
+    dragModeAction->setText(tr("drag"));
+    dragModeAction->setCheckable(true);
+    dragModeAction->setChecked(false);
     
-    connect(drawModeButton, &QAbstractButton::toggled, this, &TView::enableDrawMode);
-    connect(dragModeButton, &QAbstractButton::toggled, this, &TView::enableDragMode);
+    connect(drawModeAction, &QAction::triggered, this, &TView::enableDrawMode);
+    connect(dragModeAction, &QAction::triggered, this, &TView::enableDragMode);
 }
 
 void TView::wheelEvent(QWheelEvent *event) {
@@ -36,24 +36,24 @@ void TView::wheelEvent(QWheelEvent *event) {
 
 void TView::enableDragMode(bool checked) {
     if (checked) {
-	dragModeButton->setChecked(checked);
-	drawModeButton->setChecked(!checked);
+	dragModeAction->setChecked(checked);
+	drawModeAction->setChecked(!checked);
 	this->setDragMode(QGraphicsView::ScrollHandDrag);
 	this->setInteractive(false);
 	// dragModeButton->setCheckable(false);
     } else {
-	// dragModeButton->setChecked(true);
+	dragModeAction->setChecked(true);
     }
 }
 
 void TView::enableDrawMode(bool checked) {
     if (checked) {
-	dragModeButton->setChecked(!checked);
-	drawModeButton->setChecked(checked);
+	dragModeAction->setChecked(!checked);
+	drawModeAction->setChecked(checked);
 	this->setDragMode(QGraphicsView::NoDrag);
 	this->setInteractive(true);
 	// drawModeButton->setCheckable(false);
     } else {
-	// drawModeButton->setChecked(true);
+	drawModeAction->setChecked(true);
     }
 }
