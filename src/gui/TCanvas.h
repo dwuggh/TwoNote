@@ -13,11 +13,10 @@
 #include <QGraphicsSceneWheelEvent>
 #include <QGraphicsPathItem>
 #include <QPainterPath>
-#include "utils/LineShape.h"
 #include <QDebug>
 #include <QDataStream>
 #include <QFile>
-#include <QAction>
+#include "utils/LineShape.h"
 
 
 class TCanvas : public QGraphicsScene {
@@ -26,12 +25,18 @@ Q_OBJECT
 
 public:
     explicit TCanvas(QWidget *parent = nullptr);
-    QAction *saveAction;
-    QAction *loadAction;
+    TCanvas(const QString& name, QWidget *parent = nullptr);
+    QString bufferFileName;
+    void save();
+
+    friend QDebug operator<<(QDebug argument, const TCanvas &obj);
+    friend QDataStream &operator>>(QDataStream &in, TCanvas &obj);
+    friend QDataStream &operator<<(QDataStream &out, const TCanvas &obj);
+
 
 public slots:
-    void save();
-    void load();
+    // void save();
+    // void load();
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *) override;
@@ -50,7 +55,9 @@ private:
     QGraphicsPathItem* currentPathItem;
     QPen pen;
     void paintLines();
+    
 };
 
+typedef QList<TCanvas> TCanvasList;
 
 #endif //TWONOTE_TCANVAS_H

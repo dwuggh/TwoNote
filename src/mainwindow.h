@@ -27,7 +27,6 @@ private:
     QMenuBar* menubar;
     QToolBar* toolbar;
     TView* view;
-    TCanvas* scene;
 
     void setupMenu();
     void setupToolbar();

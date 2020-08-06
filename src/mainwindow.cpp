@@ -20,9 +20,10 @@ MainWindow::MainWindow(QWidget *parent)
 void MainWindow::setupCanvas() {
     
     view = new TView(this);
-    scene = new TCanvas(view);
-    view->setScene(scene);
-    scene->setSceneRect(QRectF(-width / 2, height / 2, width, height));
+    // canvas = new TCanvas(view);
+    TCanvas* canvas = view->currentBuffer;
+    // view->setScene(canvas);
+    canvas->setSceneRect(QRectF(-width / 2, height / 2, width, height));
     setCentralWidget(view);
     view->show();
 }
@@ -37,8 +38,21 @@ void MainWindow::setupMenu() {
     file->setObjectName("file");
     file->setTitle("file");
 
-    file->addAction(scene->saveAction);
-    file->addAction(scene->loadAction);
+    QAction* save = new QAction;
+    save->setText("save");
+    save->setChecked(false);
+    save->setCheckable(false);
+    QAction* load = new QAction;
+    load->setText("load");
+    load->setChecked(false);
+    load->setCheckable(false);
+    connect(save, &QAction::triggered, this->view, &TView::save);
+    connect(load, &QAction::triggered, this->view, &TView::load);
+
+    // file->addAction(canvas->saveAction);
+    // file->addAction(canvas->loadAction);
+    file->addAction(save);
+    file->addAction(load);
 
     menubar->addMenu(file);
 

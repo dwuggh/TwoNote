@@ -11,6 +11,11 @@ TView::TView(QWidget* parent) : QGraphicsView(parent) {
     this->resize(res_width, res_height);
     this->centerOn(0, 0);
 
+    this->changeCurrentBuffer(new TCanvas(this));
+    // currentBuffer = new TCanvas(this);
+    // this->setScene(currentBuffer);
+    // file.setFileName(currentBuffer->bufferFileName);
+
     drawModeAction = new QAction;
     drawModeAction->setText(tr("draw"));
     drawModeAction->setCheckable(true);
@@ -56,4 +61,33 @@ void TView::enableDrawMode(bool checked) {
     } else {
 	drawModeAction->setChecked(true);
     }
+}
+
+void TView::save() {
+    if (currentBuffer->bufferFileName != "") {
+	currentBuffer->save();
+    }
+}
+
+void TView::load() {
+    // https://stackoverflow.com/questions/10273816/how-to-check-whether-file-exists-in-qt-in-c/40203257
+    QString name = currentBuffer->bufferFileName;
+    bool file_exists = QFileInfo::exists(name) && QFileInfo(name).isFile();
+    if (file_exists) {
+	qDebug() << "loading" << name;
+	// currentBuffer = new TCanvas(name, this);
+	this->changeCurrentBuffer(new TCanvas(name, this));
+    } else {
+	qDebug() << "failed to load" << name;
+	// exception
+    }
+}
+
+TCanvas* TView::changeCurrentBuffer(TCanvas* newBuffer) {
+    TCanvas* lastBuffer = this->currentBuffer;
+    this->currentBuffer = newBuffer;
+    this->bufferName = currentBuffer->bufferFileName;
+    this->setScene(currentBuffer);
+    // file.setFileName(currentBuffer->bufferFileName);
+    return lastBuffer;
 }

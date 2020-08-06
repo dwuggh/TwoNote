@@ -11,42 +11,32 @@ TCanvas::TCanvas(QWidget* parent) : QGraphicsScene(parent) {
     pen.setColor(Qt::black);
     pen.setJoinStyle(Qt::RoundJoin);
     pen.setWidthF(3.0);
+    bufferFileName = "test.tnote";
     // file util
     // file.setObjectName(QString("test"));
     file.setFileName("test.tnote");
     // this->lineShapes = new LineShapes;
     // file.open();
-    saveAction = new QAction;
-    saveAction->setText(tr("save"));
-    saveAction->setCheckable(false);
-    saveAction->setChecked(false);
-    loadAction = new QAction;
-    loadAction->setText(tr("load"));
-    loadAction->setCheckable(false);
-    loadAction->setChecked(false);
-    connect(saveAction, &QAction::triggered, this, &TCanvas::save);
-    connect(loadAction, &QAction::triggered, this, &TCanvas::load);
+}
+
+TCanvas::TCanvas(const QString& name, QWidget* parent) : TCanvas(parent) {
+    bufferFileName = name;
+    file.setFileName(name);
+    if (file.exists()) {
+	file.open(QIODevice::ReadOnly);
+	QDataStream in(&file);
+	in >> *lineShapes;
+	file.close();
+	this->paintLines();
+    }
 }
 
 void TCanvas::save() {
+    qDebug() << "saving" << *this;
     file.open(QIODevice::WriteOnly);
     QDataStream out(&file);
-    // const LineShapes ls = this->lineShapes;
-    out << *this->lineShapes;
+    out << *this;
     file.close();
-    // this->saveButton->setChecked(false);
-}
-
-void TCanvas::load() {
-    file.open(QIODevice::ReadOnly);
-    QDataStream in(&file);
-    
-    delete this->lineShapes;
-    this->lineShapes = new LineShapes();
-    in >> *this->lineShapes;
-    file.close();
-    this->paintLines();
-    // this->loadButton->setChecked(false);
 }
 
 void TCanvas::mousePressEvent(QGraphicsSceneMouseEvent *event) {
@@ -78,7 +68,7 @@ void TCanvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     if (event->button() == Qt::LeftButton && isDrawing) {
         isDrawing = false;
         lineShapes->append(currentLine);
-        qDebug() << currentLine;
+        // qDebug() << currentLine;
     }
 }
 
@@ -103,4 +93,20 @@ void TCanvas::paintLines() {
 void TCanvas::wheelEvent(QGraphicsSceneWheelEvent *event) {
     qreal delta_y = event->delta() * 0.1;
     // this->update(QRectF());
+}
+
+QDebug operator<<(QDebug argument, const TCanvas &obj) {
+    argument.nospace() << "file: " << obj.bufferFileName
+		       << "," << *obj.lineShapes;
+    return argument.space();
+}
+
+QDataStream &operator>>(QDataStream &in, TCanvas &obj) {
+    in >> *obj.lineShapes;
+    return in;
+}
+
+QDataStream &operator<<(QDataStream &out, const TCanvas &obj) {
+    out << *obj.lineShapes;
+    return out;
 }
