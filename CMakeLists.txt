@@ -18,15 +18,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-find_package(ECM REQUIRED NO_MODULE)
-set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+# find_package(ECM REQUIRED NO_MODULE)
+# set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
-include(KDEInstallDirs)
-include(KDECMakeSettings)
-include(KDECompilerSettings NO_POLICY_SCOPE)
-include(FeatureSummary)
+# include(KDEInstallDirs)
+# include(KDECMakeSettings)
+# include(KDECompilerSettings NO_POLICY_SCOPE)
+# include(FeatureSummary)
 
 # Find Qt modules
 find_package(Qt5 CONFIG REQUIRED COMPONENTS
@@ -46,9 +46,15 @@ find_package(Qt5 CONFIG REQUIRED COMPONENTS
 
 unset (TwoNote_SOURCES)
 file (GLOB_RECURSE TwoNote_SOURCES
-  src/gui/*.cpp
-  src/gui/*.h
-  src/gui/*.ui
+  src/utils/*.h
+  src/utils/*.cpp
+  src/gui/TCanvas.h
+  src/gui/TCanvas.cpp
+  src/gui/TView.h
+  src/gui/TView.cpp
+  src/mainwindow.ui
+  src/mainwindow.h
+  src/mainwindow.cpp
   src/main.cpp
   )
 
