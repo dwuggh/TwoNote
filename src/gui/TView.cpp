@@ -69,19 +69,19 @@ void TView::save() {
     }
 }
 
-void TView::load() {
+void TView::loadFileOrBuffer(const QString& name) {
     // https://stackoverflow.com/questions/10273816/how-to-check-whether-file-exists-in-qt-in-c/40203257
-    QString name = currentBuffer->bufferFileName;
     bool file_exists = QFileInfo::exists(name) && QFileInfo(name).isFile();
     if (file_exists) {
-	qDebug() << "loading" << name;
+	qDebug() << "TView: loading" << name;
 	// currentBuffer = new TCanvas(name, this);
 	this->changeCurrentBuffer(new TCanvas(name, this));
     } else {
-	qDebug() << "failed to load" << name;
+	qDebug() << "TView: failed to load" << name;
 	// exception
     }
 }
+
 
 TCanvas* TView::changeCurrentBuffer(TCanvas* newBuffer) {
     TCanvas* lastBuffer = this->currentBuffer;

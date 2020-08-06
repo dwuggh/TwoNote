@@ -7,6 +7,7 @@
 #include "TView.h"
 #include <QScrollBar>
 #include <QtWidgets>
+#include <QFileDialog>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -31,6 +32,9 @@ private:
     void setupMenu();
     void setupToolbar();
     void setupCanvas();
+
+private slots:
+    void load();
     
 };
 #endif // MAINWINDOW_H

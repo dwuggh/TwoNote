@@ -47,7 +47,8 @@ void MainWindow::setupMenu() {
     load->setChecked(false);
     load->setCheckable(false);
     connect(save, &QAction::triggered, this->view, &TView::save);
-    connect(load, &QAction::triggered, this->view, &TView::load);
+    connect(load, &QAction::triggered, this, &MainWindow::load);
+    // connect(load, &QAction::triggered, this->view, &TView::load);
 
     // file->addAction(canvas->saveAction);
     // file->addAction(canvas->loadAction);
@@ -68,6 +69,12 @@ void MainWindow::setupToolbar() {
     this->addToolBar(toolbar);
     toolbar->addAction(view->drawModeAction);
     toolbar->addAction(view->dragModeAction);
+}
+
+void MainWindow::load() {
+    QString name = QFileDialog::getOpenFileName
+	(this, tr("Open .tnote"), "./", tr("twonote files (*.tnote)"));
+    view->loadFileOrBuffer(name);
 }
 
 MainWindow::~MainWindow()

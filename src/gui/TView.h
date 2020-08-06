@@ -8,6 +8,7 @@
 #include <QOpenGLWidget>
 #include <QtWidgets>
 #include <QFileInfo>
+#include <QFileDialog>
 #include "TCanvas.h"
 
 class TView : public QGraphicsView {
@@ -21,12 +22,13 @@ public:
     QAction *drawModeAction;
     QAction *dragModeAction;
     TCanvas* currentBuffer;
+    void loadFileOrBuffer(const QString& name);
     
 public slots:
     void enableDragMode(bool checked);
     void enableDrawMode(bool checked);
     void save();
-    void load();
+    // void load();
 
 protected:
     void wheelEvent(QWheelEvent *) override;
@@ -35,7 +37,7 @@ private:
     QFile file;
     QString bufferName;
     // treat canvases as different buffer
-    TCanvasList bufferList;
+    QList<TCanvas> bufferList;
     TCanvas* changeCurrentBuffer(TCanvas* newBuffer);
 };
 
