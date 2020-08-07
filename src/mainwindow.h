@@ -2,12 +2,13 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "TCanvas.h"
 #include <QOpenGLWidget>
-#include "TView.h"
 #include <QScrollBar>
 #include <QtWidgets>
 #include <QFileDialog>
+#include "TCanvas.h"
+#include "TView.h"
+#include "Configs.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -20,6 +21,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow() override;
+    Configs configs;
     int width = 1920;
     int height = 1080;
 

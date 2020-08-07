@@ -12,7 +12,8 @@ TCanvas::TCanvas(QWidget* parent) : QGraphicsScene(parent) {
     // the default name is just "", need to specify file name when saving
     QString name = QDateTime::currentDateTime().toString("yyyy-MM-dd-hh:mm:ss");
     // store in temp file
-    setName("/tmp/TwoNote/" + name);
+    setName(Configs().tempDir.absolutePath() + name);
+    qDebug() << bufferName;
     uuid = QUuid::createUuid();
 }
 

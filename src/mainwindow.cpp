@@ -13,8 +13,6 @@ MainWindow::MainWindow(QWidget *parent)
     this->setupCanvas();
     this->setupToolbar();
     this->setupMenu();
-    
-
 }
 
 void MainWindow::setupCanvas() {
@@ -87,7 +85,7 @@ void MainWindow::setupToolbar() {
 
 void MainWindow::load() {
     QString name = QFileDialog::getOpenFileName
-	(this, tr("open file"), "./", tr("twonote files (*.tnote)"));
+	(this, tr("open file"), configs.baseDir.absolutePath(), tr("twonote files (*.tnote)"));
     view->loadFile(name);
 }
 
@@ -101,7 +99,7 @@ void MainWindow::save() {
 
 void MainWindow::saveAs() {
     QString name = QFileDialog::getSaveFileName
-	(this, tr("save file"), "./", tr("twonote files (*.tnote)"));
+	(this, tr("save file"), configs.baseDir.absolutePath(), tr("twonote files (*.tnote)"));
     view->saveBuffer(name);
 }
 

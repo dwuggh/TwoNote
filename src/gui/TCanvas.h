@@ -19,7 +19,8 @@
 #include <QFileInfo>
 #include <QDateTime>
 #include <QUuid>
-#include "utils/LineShape.h"
+#include "LineShape.h"
+#include "Configs.h"
 
 
 class TCanvas : public QGraphicsScene {
