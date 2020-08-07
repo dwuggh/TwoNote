@@ -8,13 +8,9 @@ TView::TView(QWidget* parent) : QGraphicsView(parent) {
 			 QPainter::SmoothPixmapTransform |
 			 QPainter::HighQualityAntialiasing);
     this->setViewport(new QOpenGLWidget);
-    this->resize(res_width, res_height);
-    this->centerOn(0, 0);
+    this->switchBuffer();
 
-    this->changeCurrentBuffer(new TCanvas(this));
-    // currentBuffer = new TCanvas(this);
-    // this->setScene(currentBuffer);
-    // file.setFileName(currentBuffer->bufferFileName);
+
 
     drawModeAction = new QAction;
     drawModeAction->setText(tr("draw"));
@@ -64,30 +60,57 @@ void TView::enableDrawMode(bool checked) {
 }
 
 void TView::save() {
-    if (currentBuffer->bufferFileName != "") {
+    if (currentBuffer->bufferName != "") {
 	currentBuffer->save();
     }
 }
 
-void TView::loadFileOrBuffer(const QString& name) {
+void TView::loadFile(const QString& name) {
     // https://stackoverflow.com/questions/10273816/how-to-check-whether-file-exists-in-qt-in-c/40203257
     bool file_exists = QFileInfo::exists(name) && QFileInfo(name).isFile();
     if (file_exists) {
 	qDebug() << "TView: loading" << name;
 	// currentBuffer = new TCanvas(name, this);
-	this->changeCurrentBuffer(new TCanvas(name, this));
+	this->switchBuffer(name);
     } else {
 	qDebug() << "TView: failed to load" << name;
 	// exception
     }
 }
 
-
-TCanvas* TView::changeCurrentBuffer(TCanvas* newBuffer) {
-    TCanvas* lastBuffer = this->currentBuffer;
-    this->currentBuffer = newBuffer;
-    this->bufferName = currentBuffer->bufferFileName;
-    this->setScene(currentBuffer);
-    // file.setFileName(currentBuffer->bufferFileName);
-    return lastBuffer;
+void TView::saveBuffer(const QString &name) {
+    if (name != "") {
+	currentBuffer->saveAs(name);
+    } else {
+	currentBuffer->save();
+    }
 }
+
+void TView::switchBuffer(const QString& name) {
+    for (auto buffer: bufferList) {
+	if (buffer->bufferName == name) {
+	    currentBuffer = buffer;
+	    bufferName = buffer->bufferName;
+	    this->setScene(currentBuffer);
+	    return;
+        }
+    }
+    currentBuffer = new TCanvas(name, this);
+    this->setScene(currentBuffer);
+    bufferName = currentBuffer->bufferName;
+    qDebug() << *currentBuffer;
+    bufferList.append(currentBuffer);
+}
+
+void TView::switchBuffer() {
+    // QString name = QDateTime::currentDateTime().toString("yyyy-MM-dd-hh:mm:ss");
+    currentBuffer = new TCanvas(this);
+    // currentBuffer->bufferName = name;
+    currentBuffer->setSceneRect(QRectF(- width / 2, height / 2, width, height));
+    this->setScene(currentBuffer);
+    this->centerOn(0, 0);
+    bufferName = currentBuffer->bufferName;
+    qDebug() << *currentBuffer;
+    bufferList.append(currentBuffer);
+}
+

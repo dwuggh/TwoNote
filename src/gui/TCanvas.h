@@ -16,6 +16,9 @@
 #include <QDebug>
 #include <QDataStream>
 #include <QFile>
+#include <QFileInfo>
+#include <QDateTime>
+#include <QUuid>
 #include "utils/LineShape.h"
 
 
@@ -26,8 +29,13 @@ Q_OBJECT
 public:
     explicit TCanvas(QWidget *parent = nullptr);
     TCanvas(const QString& name, QWidget *parent = nullptr);
-    QString bufferFileName;
+    QString setName(const QString& name);
     void save();
+    void saveAs(const QString& name);
+    // buffer name can be different from file name
+    QString bufferName;
+    // assign a uuid for further identification
+    QUuid uuid;
 
     friend QDebug operator<<(QDebug argument, const TCanvas &obj);
     friend QDataStream &operator>>(QDataStream &in, TCanvas &obj);
@@ -46,7 +54,7 @@ protected:
     // void paintEvent(QPaintEvent *) override;
 private:
     QFile file;
-    LineShapes* lineShapes;
+    LineShapes lineShapes;
     LineShape currentLine;
     bool isDrawing = false;
     QPointF currentPoint;

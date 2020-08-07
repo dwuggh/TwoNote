@@ -34,30 +34,44 @@ void MainWindow::setupMenu() {
     menubar->setGeometry(QRect(0, 0, 720, 30));
     this->setMenuBar(menubar);
 
-    QMenu* file = new QMenu(menubar);
+    file = new QMenu(menubar);
     file->setObjectName("file");
     file->setTitle("file");
 
-    QAction* save = new QAction;
-    save->setText("save");
-    save->setChecked(false);
-    save->setCheckable(false);
-    QAction* load = new QAction;
-    load->setText("load");
-    load->setChecked(false);
-    load->setCheckable(false);
-    connect(save, &QAction::triggered, this->view, &TView::save);
-    connect(load, &QAction::triggered, this, &MainWindow::load);
+    saveBufferAction = new QAction;
+    saveBufferAction->setText("save");
+    saveBufferAction->setChecked(false);
+    saveBufferAction->setCheckable(false);
+
+    openFileAction = new QAction;
+    openFileAction->setText("load");
+    openFileAction->setChecked(false);
+    openFileAction->setCheckable(false);
+
+    saveBufferAsAction = new QAction;
+    saveBufferAsAction->setText("save as");
+    saveBufferAsAction->setChecked(false);
+    saveBufferAsAction->setCheckable(false);
+
+    createBufferAction = new QAction;
+    createBufferAction->setText("new");
+    createBufferAction->setChecked(false);
+    createBufferAction->setCheckable(false);
+
+    connect(saveBufferAction,   &QAction::triggered, this, &MainWindow::save);
+    connect(openFileAction,     &QAction::triggered, this, &MainWindow::load);
+    connect(saveBufferAsAction, &QAction::triggered, this, &MainWindow::saveAs);
+    connect(createBufferAction, &QAction::triggered, this, &MainWindow::create);
     // connect(load, &QAction::triggered, this->view, &TView::load);
 
-    // file->addAction(canvas->saveAction);
-    // file->addAction(canvas->loadAction);
-    file->addAction(save);
-    file->addAction(load);
+    file->addAction(saveBufferAction);
+    file->addAction(openFileAction);
+    file->addAction(saveBufferAsAction);
+    file->addAction(createBufferAction);
 
     menubar->addMenu(file);
 
-    QMenu* preference = new QMenu(menubar);
+    // QMenu* preference = new QMenu(menubar);
     
 }
 
@@ -73,11 +87,34 @@ void MainWindow::setupToolbar() {
 
 void MainWindow::load() {
     QString name = QFileDialog::getOpenFileName
-	(this, tr("Open .tnote"), "./", tr("twonote files (*.tnote)"));
-    view->loadFileOrBuffer(name);
+	(this, tr("open file"), "./", tr("twonote files (*.tnote)"));
+    view->loadFile(name);
 }
+
+void MainWindow::create() {
+    view->switchBuffer();
+}
+
+void MainWindow::save() {
+    view->saveBuffer("");
+}
+
+void MainWindow::saveAs() {
+    QString name = QFileDialog::getSaveFileName
+	(this, tr("save file"), "./", tr("twonote files (*.tnote)"));
+    view->saveBuffer(name);
+}
+
 
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete view;
+    delete file;
+    delete menubar;
+    delete toolbar;
+    delete saveBufferAction;
+    delete openFileAction;
+    delete saveBufferAsAction;
+    
 }

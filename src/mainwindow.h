@@ -25,9 +25,14 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    TView* view;
     QMenuBar* menubar;
     QToolBar* toolbar;
-    TView* view;
+    QMenu* file;
+    QAction* saveBufferAction;
+    QAction* openFileAction;
+    QAction* saveBufferAsAction;
+    QAction* createBufferAction;
 
     void setupMenu();
     void setupToolbar();
@@ -35,6 +40,9 @@ private:
 
 private slots:
     void load();
+    void save();
+    void saveAs();
+    void create();
     
 };
 #endif // MAINWINDOW_H

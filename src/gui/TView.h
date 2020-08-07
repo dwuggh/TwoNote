@@ -17,12 +17,18 @@ Q_OBJECT
 
 public:
     explicit TView(QWidget *parent = nullptr);
-    int res_height = 1920;
-    int res_width = 1080;
+    int height = 3000;
+    int width  = 1920;
     QAction *drawModeAction;
     QAction *dragModeAction;
     TCanvas* currentBuffer;
-    void loadFileOrBuffer(const QString& name);
+    void loadFile(const QString& name);
+    void saveBuffer(const QString& name = "");
+    // switch buffer according to name.
+    // since the name can be equal, a better practice is by uuid.
+    void switchBuffer(const QString& name);
+    // switch to a new buffer
+    void switchBuffer();
     
 public slots:
     void enableDragMode(bool checked);
@@ -37,8 +43,7 @@ private:
     QFile file;
     QString bufferName;
     // treat canvases as different buffer
-    QList<TCanvas> bufferList;
-    TCanvas* changeCurrentBuffer(TCanvas* newBuffer);
+    QList<TCanvas*> bufferList;
 };
 
 #endif

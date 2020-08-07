@@ -17,11 +17,11 @@
 
 class LineShape {
 public:
+    LineShape(qreal width = 1.0, QColor color = QColor(Qt::black));
+
     QList<QPointF> points;
     QColor color;
     qreal width = 1.0;
-    explicit LineShape(qreal width = 1.0, QColor color = QColor(Qt::black));
-
     bool operator ==(const LineShape &other) const;
     void quadPaintLine(QPainter &painter);
     void append(const QPointF &point);

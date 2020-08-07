@@ -5,17 +5,18 @@
 #include "LineShape.h"
 
 
-bool LineShape::operator==(const LineShape &other) const {
-    return this->points == other.points &&
-            this->color == other.color &&
-            this->width == other.width;
-}
-
 LineShape::LineShape(qreal width, QColor color) {
     this->color = std::move(color);
     this->width = width;
     points = QList<QPointF>();
     this->setPen();
+}
+
+
+bool LineShape::operator==(const LineShape &other) const {
+    return this->points == other.points &&
+            this->color == other.color &&
+            this->width == other.width;
 }
 
 void LineShape::setPen() {

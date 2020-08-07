@@ -6,29 +6,39 @@
 
 TCanvas::TCanvas(QWidget* parent) : QGraphicsScene(parent) {
     isDrawing = false;
-    lineShapes = new LineShapes;
-    pen = QPen();
     pen.setColor(Qt::black);
     pen.setJoinStyle(Qt::RoundJoin);
     pen.setWidthF(3.0);
-    bufferFileName = "test.tnote";
-    // file util
-    // file.setObjectName(QString("test"));
-    file.setFileName("test.tnote");
-    // this->lineShapes = new LineShapes;
-    // file.open();
+    // the default name is just "", need to specify file name when saving
+    QString name = QDateTime::currentDateTime().toString("yyyy-MM-dd-hh:mm:ss");
+    // store in temp file
+    setName("/tmp/TwoNote/" + name);
+    uuid = QUuid::createUuid();
 }
 
+
 TCanvas::TCanvas(const QString& name, QWidget* parent) : TCanvas(parent) {
-    bufferFileName = name;
-    file.setFileName(name);
+    setName(name);
+    // if file exists, load its content from disk
     if (file.exists()) {
 	file.open(QIODevice::ReadOnly);
 	QDataStream in(&file);
-	in >> *lineShapes;
+	in >> lineShapes;
 	file.close();
 	this->paintLines();
     }
+}
+
+QString TCanvas::setName(const QString& name) {
+
+    QString oldName = bufferName;
+    QString filename = name;
+    if (QFileInfo(name).suffix() != "tnote") {
+	filename = name + ".tnote";
+    }
+    bufferName = filename;
+    file.setFileName(QFileInfo(filename).absoluteFilePath());
+    return oldName;
 }
 
 void TCanvas::save() {
@@ -37,6 +47,20 @@ void TCanvas::save() {
     QDataStream out(&file);
     out << *this;
     file.close();
+}
+
+void TCanvas::saveAs(const QString& name) {
+    qDebug() << "saving as: " << name << "\n" << *this;
+    file.setFileName(name);
+    file.open(QIODevice::WriteOnly);
+    QDataStream out(&file);
+    out << *this;
+    file.close();
+    if (bufferName == "") {
+	bufferName = name;
+    } else {
+	file.setFileName(bufferName);
+    }
 }
 
 void TCanvas::mousePressEvent(QGraphicsSceneMouseEvent *event) {
@@ -67,7 +91,7 @@ void TCanvas::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
 void TCanvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     if (event->button() == Qt::LeftButton && isDrawing) {
         isDrawing = false;
-        lineShapes->append(currentLine);
+        lineShapes.append(currentLine);
         // qDebug() << currentLine;
     }
 }
@@ -75,7 +99,7 @@ void TCanvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
 void TCanvas::paintLines() {
     this->clear();
 
-    for (auto line: *this->lineShapes) {
+    for (auto line: this->lineShapes) {
 	pen = QPen();
 	pen.setColor(line.color);
 	pen.setWidthF(line.width);
@@ -96,17 +120,19 @@ void TCanvas::wheelEvent(QGraphicsSceneWheelEvent *event) {
 }
 
 QDebug operator<<(QDebug argument, const TCanvas &obj) {
-    argument.nospace() << "file: " << obj.bufferFileName
-		       << "," << *obj.lineShapes;
+    argument.nospace()
+	<< "uuid: " << obj.uuid
+	<< "file: " << obj.bufferName
+	<< "," << obj.lineShapes;
     return argument.space();
 }
 
 QDataStream &operator>>(QDataStream &in, TCanvas &obj) {
-    in >> *obj.lineShapes;
+    in >> obj.lineShapes;
     return in;
 }
 
 QDataStream &operator<<(QDataStream &out, const TCanvas &obj) {
-    out << *obj.lineShapes;
+    out << obj.lineShapes;
     return out;
 }
