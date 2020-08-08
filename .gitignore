@@ -90,3 +90,6 @@ cmake-build-debug/
 
 # ccls cache
 .ccls-cache
+
+
+TAGS
