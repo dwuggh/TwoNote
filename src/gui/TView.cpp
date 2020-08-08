@@ -10,8 +10,6 @@ TView::TView(QWidget* parent) : QGraphicsView(parent) {
     this->setViewport(new QOpenGLWidget);
     this->switchBuffer();
 
-
-
     drawModeAction = new QAction;
     drawModeAction->setText(tr("draw"));
     drawModeAction->setCheckable(true);
@@ -106,7 +104,7 @@ void TView::switchBuffer() {
     // QString name = QDateTime::currentDateTime().toString("yyyy-MM-dd-hh:mm:ss");
     currentBuffer = new TCanvas(this);
     // currentBuffer->bufferName = name;
-    currentBuffer->setSceneRect(QRectF(- width / 2, height / 2, width, height));
+    // currentBuffer->setSceneRect(QRectF(- width / 2, height / 2, width, height));
     this->setScene(currentBuffer);
     this->centerOn(0, 0);
     bufferName = currentBuffer->bufferName;

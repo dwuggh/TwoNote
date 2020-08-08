@@ -18,8 +18,10 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QDateTime>
+#include <QSizeF>
 #include <QUuid>
 #include "LineShape.h"
+#include "TPage.h"
 #include "Configs.h"
 
 
@@ -63,7 +65,13 @@ private:
     QPainterPath currentPath;
     QGraphicsPathItem* currentPathItem;
     QPen pen;
+    QList<TPage> pages;
+    int currentPageNumber;
+    int pageCounts;
+    QSizeF pageSize;
     void paintLines();
+    void paintPages();
+    int choosedPage(QPointF& scenePoint);
     
 };
 

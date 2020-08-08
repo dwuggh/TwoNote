@@ -19,9 +19,9 @@ void MainWindow::setupCanvas() {
     
     view = new TView(this);
     // canvas = new TCanvas(view);
-    TCanvas* canvas = view->currentBuffer;
+    // TCanvas* canvas = view->currentBuffer;
     // view->setScene(canvas);
-    canvas->setSceneRect(QRectF(-width / 2, height / 2, width, height));
+    // canvas->setSceneRect(QRectF(-width / 2, height / 2, width, height));
     setCentralWidget(view);
     view->show();
 }
