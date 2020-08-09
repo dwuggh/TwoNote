@@ -4,6 +4,7 @@
 
 #include "TCanvas.h"
 
+
 TCanvas::TCanvas(QWidget* parent) : QGraphicsScene(parent) {
     isDrawing = false;
     pen.setColor(Qt::black);
@@ -14,8 +15,8 @@ TCanvas::TCanvas(QWidget* parent) : QGraphicsScene(parent) {
     // the default name is just "", need to specify file name when saving
     QString name = QDateTime::currentDateTime().toString("yyyy-MM-dd-hh:mm:ss");
     // store in temp file
-    setName(Configs().tempDir.absolutePath() + name);
-    qDebug() << bufferName;
+    setName(config.tempDir.absolutePath() + name);
+    qDebug() << "creating new buffer:" << bufferName;
     uuid = QUuid::createUuid();
     // add one page at start
     pages = QList<TPage>();
@@ -32,7 +33,6 @@ TCanvas::TCanvas(const QString& name, QWidget* parent) : TCanvas(parent) {
 	QDataStream in(&file);
 	in >> pages;
 	file.close();
-	// this->paintLines();
 	this->paintPages();
     }
 }
@@ -50,7 +50,7 @@ QString TCanvas::setName(const QString& name) {
 }
 
 void TCanvas::save() {
-    qDebug() << "saving" << *this;
+    qDebug() << "saving" << this->bufferName;
     file.open(QIODevice::WriteOnly);
     QDataStream out(&file);
     out << *this;
@@ -58,7 +58,7 @@ void TCanvas::save() {
 }
 
 void TCanvas::saveAs(const QString& name) {
-    qDebug() << "saving as: " << name << "\n" << *this;
+    qDebug() << "saving " << this->bufferName << "as:" << name;
     file.setFileName(name);
     file.open(QIODevice::WriteOnly);
     QDataStream out(&file);
@@ -71,6 +71,15 @@ void TCanvas::saveAs(const QString& name) {
     }
 }
 
+void TCanvas::newPage() {
+    int newPageIndex = pages.size();
+    qDebug() << "new page for buffer:" << this->bufferName
+	     << "page: " << newPageIndex;
+    pages.append(TPage(newPageIndex));
+    this->setSceneRect(- pageSize.width() / 2, - pageSize.height() / 2,
+		       (newPageIndex + 1) * pageSize.width(), (newPageIndex + 1) * pageSize.height());
+}
+
 void TCanvas::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     if (event->button() == Qt::LeftButton) {
         isDrawing = true;
@@ -78,11 +87,16 @@ void TCanvas::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 	lastPoint = event->scenePos();
         currentLine = LineShape(pen.widthF(), pen.color());
         currentLine.append(currentPoint);
+
+        // new path
         currentPath = QPainterPath();
         currentPath.moveTo(currentPoint);
         currentPathItem = this->addPath(currentPath, pen);
         currentPathItem->setPen(pen);
-	currentPageNumber = choosedPage(currentPoint);
+
+	// count page number when start drawing
+	// if the line cross multiple pages, it still belong to the page which has its start point.
+        currentPageNumber = choosedPage(currentPoint);
         // qDebug() << this->sceneRect();
     }
 }
@@ -100,44 +114,31 @@ void TCanvas::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
 void TCanvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     if (event->button() == Qt::LeftButton && isDrawing) {
         isDrawing = false;
-        // lineShapes.append(currentLine);
-	pages[currentPageNumber].lines.append(currentLine);
-        // qDebug() << currentLine;
+	// pages[currentPageNumber].lines.append(currentLine);
+	pages[currentPageNumber].addLine(currentLine);
     }
 }
 
-void TCanvas::paintLines() {
-    this->clear();
-
-    for (auto line: this->lineShapes) {
-	pen = QPen();
-	pen.setColor(line.color);
-	pen.setWidthF(line.width);
-	currentPath = QPainterPath();
-	auto points = line.points;
-	currentPath.moveTo(points[0]);
-	for (int i = 1; i <points.length() - 2; i++) {
-	    currentPath.quadTo(points[i], points[i + 1]);
-	}
-	this->addPath(currentPath, pen);
+void TCanvas::paintLines(const LineShapes lines) {
+    for (LineShape line : lines) {
+      currentPath = QPainterPath();
+      QList<QPointF> points = line.points;
+      currentPath.moveTo(points[0]);
+      for (int i = 1; i < points.length() - 2; i++) {
+        currentPath.quadTo(points[i], points[i + 1]);
+      }
+      this->addPath(currentPath, line.pen);
     }
 }
 
 void TCanvas::paintPages() {
     this->clear();
-    for (TPage page: this->pages) {
-	for (LineShape line: page.lines) {
-	    pen = QPen();
-            pen.setColor(line.color);
-            pen.setWidthF(line.width);
-            currentPath = QPainterPath();
-            auto points = line.points;
-            currentPath.moveTo(points[0]);
-            for (int i = 1; i < points.length() - 2; i++) {
-              currentPath.quadTo(points[i], points[i + 1]);
-            }
-            this->addPath(currentPath, pen);
-        }
+    this->setSceneRect(- pageSize.width() / 2, - pageSize.height() / 2,
+		       pages.size() * pageSize.width(), pages.size() * pageSize.height());
+    for (TPage& page: this->pages) {
+	qDebug() << "painting page" << page.pageNumber;
+	qDebug() << "lines: " << page.sceneLineShapes();
+	paintLines(page.sceneLineShapes());
     }
 }
 
@@ -172,3 +173,4 @@ QDataStream &operator<<(QDataStream &out, const TCanvas &obj) {
     out << obj.pages;
     return out;
 }
+

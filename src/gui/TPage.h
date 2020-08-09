@@ -22,6 +22,7 @@ public:
 
     QPointF pagePosToScenePos(QPointF& pagePoint);
     QPointF scenePosToPagePos(QPointF& scenePoint);
+    void addLine(const LineShape& sceneLine);
     LineShapes sceneLineShapes();
 
     friend QDebug operator<<(QDebug argument, const TPage &obj);

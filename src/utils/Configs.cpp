@@ -13,3 +13,6 @@ Configs::Configs() {
 	     << "temp directory: " << tempDir
 	     << "\n";
 }
+
+
+Configs config = Configs();

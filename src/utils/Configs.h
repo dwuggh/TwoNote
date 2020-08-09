@@ -12,4 +12,6 @@ public:
     QDir baseDir;
 };
 
+extern Configs config;
+
 #endif

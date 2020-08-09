@@ -9,7 +9,10 @@
 #include <QtWidgets>
 #include <QFileInfo>
 #include <QFileDialog>
+#include "Configs.h"
 #include "TCanvas.h"
+
+// extern Configs config;
 
 class TView : public QGraphicsView {
 
@@ -34,6 +37,7 @@ public slots:
     void enableDragMode(bool checked);
     void enableDrawMode(bool checked);
     void save();
+    void newPage();
     // void load();
 
 protected:

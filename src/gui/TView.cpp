@@ -1,4 +1,3 @@
-
 #include "TView.h"
 
 
@@ -96,7 +95,7 @@ void TView::switchBuffer(const QString& name) {
     currentBuffer = new TCanvas(name, this);
     this->setScene(currentBuffer);
     bufferName = currentBuffer->bufferName;
-    qDebug() << *currentBuffer;
+    qDebug() << "switch to buffer:" << currentBuffer->bufferName;
     bufferList.append(currentBuffer);
 }
 
@@ -108,7 +107,10 @@ void TView::switchBuffer() {
     this->setScene(currentBuffer);
     this->centerOn(0, 0);
     bufferName = currentBuffer->bufferName;
-    qDebug() << *currentBuffer;
+    qDebug() << "switch to buffer:" << currentBuffer->bufferName;
     bufferList.append(currentBuffer);
 }
 
+void TView::newPage() {
+    currentBuffer->newPage();
+}

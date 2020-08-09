@@ -24,6 +24,7 @@
 #include "TPage.h"
 #include "Configs.h"
 
+// extern Configs config;
 
 class TCanvas : public QGraphicsScene {
 
@@ -35,6 +36,7 @@ public:
     QString setName(const QString& name);
     void save();
     void saveAs(const QString& name);
+    void newPage();
     // buffer name can be different from file name
     QString bufferName;
     // assign a uuid for further identification
@@ -45,9 +47,6 @@ public:
     friend QDataStream &operator<<(QDataStream &out, const TCanvas &obj);
 
 
-public slots:
-    // void save();
-    // void load();
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *) override;
@@ -69,7 +68,7 @@ private:
     int currentPageNumber;
     int pageCounts;
     QSizeF pageSize;
-    void paintLines();
+    void paintLines(const LineShapes lines);
     void paintPages();
     int choosedPage(QPointF& scenePoint);
     
