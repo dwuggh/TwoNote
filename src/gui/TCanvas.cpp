@@ -10,18 +10,17 @@ TCanvas::TCanvas(QWidget* parent) : QGraphicsScene(parent) {
     pen.setColor(Qt::black);
     pen.setJoinStyle(Qt::RoundJoin);
     pen.setWidthF(3.0);
-    pageSize = config.pageSize;
-    setSceneRect(- pageSize.width() / 2, - pageSize.height() / 2, pageSize.width(), pageSize.height());
+
     // the default name is just "", need to specify file name when saving
     QString name = QDateTime::currentDateTime().toString("yyyy-MM-dd-hh:mm:ss");
     // store in temp file
     setName(config.tempDir.absolutePath() + name);
     qDebug() << "creating new buffer:" << bufferName;
     uuid = QUuid::createUuid();
+
+    pageSize = config.pageSize;
     // add one page at start
-    pages = QList<TPage>();
-    pages.append(TPage());
-    currentPageNumber = 0;
+    currentPageNumber = newPage();
 }
 
 
@@ -71,20 +70,35 @@ void TCanvas::saveAs(const QString& name) {
     }
 }
 
-void TCanvas::newPage() {
+int TCanvas::newPage() {
     int newPageIndex = pages.size();
     qDebug() << "new page for buffer:" << this->bufferName
 	     << "page: " << newPageIndex;
     pages.append(TPage(newPageIndex));
-    this->setSceneRect(- pageSize.width() / 2, - pageSize.height() / 2,
-		       pageSize.width(), (newPageIndex + 1) * pageSize.height());
+    // TPage& page = pages.last();
+    int margin = 50;
+    // this->setSceneRect(page.pageRect());
+    this->setSceneRect(- pageSize.width() / 2, - pageSize.height() / 2 - margin / 2,
+		       pageSize.width(), (newPageIndex + 1) * pageSize.height() + margin);
+    return newPageIndex;
+}
+
+void TCanvas::drawBackground(QPainter* painter, const QRectF &rect) {
+    painter->setBrush(QBrush(Qt::gray));
+    painter->drawRect(rect);
+    painter->setBrush(QBrush(Qt::white));
+    for (auto page: pages) {
+	painter->drawRect(page.pageRect());
+    }
 }
 
 void TCanvas::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    if (event->button() == Qt::LeftButton) {
-        isDrawing = true;
-        currentPoint = event->scenePos();
-	lastPoint = event->scenePos();
+    if (event->button() == Qt::LeftButton && this->contains(event->scenePos())) {
+	isDrawing = true;
+	currentPoint = event->scenePos();
+        qDebug() << "start at:" << currentPoint;
+        qDebug() << "size:" << sceneRect();
+        lastPoint = event->scenePos();
         currentLine = LineShape(pen.widthF(), pen.color());
         currentLine.append(currentPoint);
 
@@ -94,15 +108,18 @@ void TCanvas::mousePressEvent(QGraphicsSceneMouseEvent *event) {
         currentPathItem = this->addPath(currentPath, pen);
         currentPathItem->setPen(pen);
 
-	// count page number when start drawing
-	// if the line cross multiple pages, it still belong to the page which has its start point.
+        // count page number when start drawing
+        // if the line cross multiple pages, it still belong to the page
+        // which has its start point.
         currentPageNumber = choosedPage(currentPoint);
         // qDebug() << this->sceneRect();
+        return;
     }
 }
 
 void TCanvas::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
-    if (event->buttons() & Qt::LeftButton) {
+    if (event->buttons() == Qt::LeftButton && isDrawing && this->contains(event->scenePos())) {
+
 	lastPoint = currentPoint;
         currentPoint = event->scenePos();
         currentLine.append(currentPoint);
@@ -112,7 +129,7 @@ void TCanvas::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void TCanvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
-    if (event->button() == Qt::LeftButton && isDrawing) {
+    if (event->button() == Qt::LeftButton && isDrawing && this->contains(event->scenePos())) {
         isDrawing = false;
 	// pages[currentPageNumber].lines.append(currentLine);
 	pages[currentPageNumber].addLine(currentLine);
@@ -149,6 +166,16 @@ int TCanvas::choosedPage(QPointF& scenePoint) {
 	    return page - 1;
 	}
     }
+}
+
+bool TCanvas::contains(const QPointF& point) const {
+    for (auto page: pages) {
+	QRectF rect = page.pageRect();
+	if (rect.contains(point)) {
+	    return true;
+	}
+    }
+    return false;
 }
 
 void TCanvas::wheelEvent(QGraphicsSceneWheelEvent *event) {

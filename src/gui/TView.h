@@ -30,6 +30,8 @@ public:
     void switchBuffer(const QString& name);
     // switch to a new buffer
     void switchBuffer();
+    void zoom(int ds);
+
     
 public slots:
     void enableDragMode(bool checked);

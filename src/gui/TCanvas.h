@@ -42,7 +42,7 @@ public:
     QString setName(const QString& name);
     void save();
     void saveAs(const QString& name);
-    void newPage();
+    int newPage();
 
     friend QDebug operator<<(QDebug argument, const TCanvas &obj);
     friend QDataStream &operator>>(QDataStream &in, TCanvas &obj);
@@ -55,6 +55,7 @@ protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *) override;
     void wheelEvent(QGraphicsSceneWheelEvent *) override;
+    void drawBackground(QPainter* painter, const QRectF &rect) override;
     // void paintEvent(QPaintEvent *) override;
 private:
     QFile file;
@@ -72,6 +73,7 @@ private:
     QSizeF pageSize;
     void paintLines(const LineShapes lines);
     void paintPages();
+    bool contains(const QPointF& point) const;
     int choosedPage(QPointF& scenePoint);
     
 };

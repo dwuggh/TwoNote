@@ -14,17 +14,14 @@ MainWindow::MainWindow(QWidget *parent)
     this->setupCanvas();
     this->setupToolbar();
     this->setupMenu();
-    qDebug() << ui->menubar->size();
-    qDebug() << view->size();
-    qDebug() << this->size();
 }
 
 void MainWindow::setupCanvas() {
     
     view = new TView(this);
-    view->setGeometry(QRect());
     setCentralWidget(view);
     view->show();
+    view->scale(0.8, 0.8);
 }
 
 void MainWindow::setupMenu() {
@@ -36,6 +33,7 @@ void MainWindow::setupMenu() {
     // connect(load, &QAction::triggered, this->view, &TView::load);
     
 }
+
 
 void MainWindow::setupToolbar() {
     

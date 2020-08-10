@@ -9,6 +9,7 @@
 #include "Configs.h"
 #include "LineShape.h"
 #include <QSizeF>
+#include <QRectF>
 
 class TPage {
 
@@ -25,6 +26,7 @@ public:
     QPointF mapToScene(QPointF &pagePoint);
     QPointF mapToPage(QPointF &scenePoint);
     void addLine(const LineShape& sceneLine);
+    const QRectF pageRect();
     LineShapes sceneLineShapes();
 
     friend QDebug operator<<(QDebug argument, const TPage &obj);
