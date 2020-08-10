@@ -6,16 +6,15 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-    // ui->setupUi(this);
+    this->showMaximized();
+    ui->setupUi(this);
 
     // this->showFullScreen();
-    this->showMaximized();
-    this->resize(1920, 1080);
 
     this->setupCanvas();
     this->setupToolbar();
     this->setupMenu();
-    qDebug() << menubar->size();
+    qDebug() << ui->menubar->size();
     qDebug() << view->size();
     qDebug() << this->size();
 }
@@ -29,49 +28,12 @@ void MainWindow::setupCanvas() {
 }
 
 void MainWindow::setupMenu() {
-    menubar = new QMenuBar(this);
-    menubar->setObjectName("menubar");
-    menubar->setGeometry(QRect(0, 0, 1080, 30));
-    this->setMenuBar(menubar);
 
-    file = new QMenu(menubar);
-    file->setObjectName("file");
-    file->setTitle("file");
-
-    saveBufferAction = new QAction;
-    saveBufferAction->setText("save");
-    saveBufferAction->setChecked(false);
-    saveBufferAction->setCheckable(false);
-
-    openFileAction = new QAction;
-    openFileAction->setText("load");
-    openFileAction->setChecked(false);
-    openFileAction->setCheckable(false);
-
-    saveBufferAsAction = new QAction;
-    saveBufferAsAction->setText("save as");
-    saveBufferAsAction->setChecked(false);
-    saveBufferAsAction->setCheckable(false);
-
-    createBufferAction = new QAction;
-    createBufferAction->setText("new");
-    createBufferAction->setChecked(false);
-    createBufferAction->setCheckable(false);
-
-    connect(saveBufferAction,   &QAction::triggered, this, &MainWindow::save);
-    connect(openFileAction,     &QAction::triggered, this, &MainWindow::load);
-    connect(saveBufferAsAction, &QAction::triggered, this, &MainWindow::saveAs);
-    connect(createBufferAction, &QAction::triggered, this, &MainWindow::create);
+    connect(ui->saveBufferAction,   &QAction::triggered, this, &MainWindow::save);
+    connect(ui->openFileAction,     &QAction::triggered, this, &MainWindow::load);
+    connect(ui->saveBufferAsAction, &QAction::triggered, this, &MainWindow::saveAs);
+    connect(ui->createBufferAction, &QAction::triggered, this, &MainWindow::create);
     // connect(load, &QAction::triggered, this->view, &TView::load);
-
-    file->addAction(saveBufferAction);
-    file->addAction(openFileAction);
-    file->addAction(saveBufferAsAction);
-    file->addAction(createBufferAction);
-
-    menubar->addMenu(file);
-
-    // QMenu* preference = new QMenu(menubar);
     
 }
 
@@ -116,12 +78,5 @@ void MainWindow::saveAs() {
 MainWindow::~MainWindow()
 {
     delete ui;
-    delete view;
-    delete file;
-    delete menubar;
-    delete toolbar;
-    delete saveBufferAction;
-    delete openFileAction;
-    delete saveBufferAsAction;
     
 }

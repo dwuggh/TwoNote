@@ -26,13 +26,7 @@ public:
 private:
     Ui::MainWindow *ui;
     TView* view;
-    QMenuBar* menubar;
     QToolBar* toolbar;
-    QMenu* file;
-    QAction* saveBufferAction;
-    QAction* openFileAction;
-    QAction* saveBufferAsAction;
-    QAction* createBufferAction;
     QAction* newPageAction;
 
     void setupMenu();
