@@ -33,14 +33,16 @@ Q_OBJECT
 public:
     explicit TCanvas(QWidget *parent = nullptr);
     TCanvas(const QString& name, QWidget *parent = nullptr);
-    QString setName(const QString& name);
-    void save();
-    void saveAs(const QString& name);
-    void newPage();
     // buffer name can be different from file name
     QString bufferName;
     // assign a uuid for further identification
     QUuid uuid;
+
+
+    QString setName(const QString& name);
+    void save();
+    void saveAs(const QString& name);
+    void newPage();
 
     friend QDebug operator<<(QDebug argument, const TCanvas &obj);
     friend QDataStream &operator>>(QDataStream &in, TCanvas &obj);

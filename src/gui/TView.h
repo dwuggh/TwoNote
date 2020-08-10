@@ -20,8 +20,6 @@ Q_OBJECT
 
 public:
     explicit TView(QWidget *parent = nullptr);
-    int height = 3000;
-    int width  = 1920;
     QAction *drawModeAction;
     QAction *dragModeAction;
     TCanvas* currentBuffer;

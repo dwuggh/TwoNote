@@ -20,6 +20,10 @@ TView::TView(QWidget* parent) : QGraphicsView(parent) {
     
     connect(drawModeAction, &QAction::triggered, this, &TView::enableDrawMode);
     connect(dragModeAction, &QAction::triggered, this, &TView::enableDragMode);
+            
+    
+    // scaling
+    // fitInView(currentBuffer->sceneRect(), Qt::AspectRatioMode::KeepAspectRatio);
 }
 
 void TView::wheelEvent(QWheelEvent *event) {

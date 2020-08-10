@@ -10,19 +10,20 @@ MainWindow::MainWindow(QWidget *parent)
 
     // this->showFullScreen();
     this->showMaximized();
+    this->resize(1920, 1080);
 
     this->setupCanvas();
     this->setupToolbar();
     this->setupMenu();
+    qDebug() << menubar->size();
+    qDebug() << view->size();
+    qDebug() << this->size();
 }
 
 void MainWindow::setupCanvas() {
     
     view = new TView(this);
-    // canvas = new TCanvas(view);
-    // TCanvas* canvas = view->currentBuffer;
-    // view->setScene(canvas);
-    // canvas->setSceneRect(QRectF(-width / 2, height / 2, width, height));
+    view->setGeometry(QRect());
     setCentralWidget(view);
     view->show();
 }
@@ -30,7 +31,7 @@ void MainWindow::setupCanvas() {
 void MainWindow::setupMenu() {
     menubar = new QMenuBar(this);
     menubar->setObjectName("menubar");
-    menubar->setGeometry(QRect(0, 0, 720, 30));
+    menubar->setGeometry(QRect(0, 0, 1080, 30));
     this->setMenuBar(menubar);
 
     file = new QMenu(menubar);

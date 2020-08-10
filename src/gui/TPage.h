@@ -6,6 +6,7 @@
 #include <QPainterPath>
 #include <QImage>
 #include <QPixmap>
+#include "Configs.h"
 #include "LineShape.h"
 #include <QSizeF>
 
@@ -13,15 +14,16 @@ class TPage {
 
 
 public:
-    TPage(int pageNumber = 0, QSizeF pageSize = QSizeF(1920, 3000));
+    TPage(int pageNumber = 0, QSizeF pageSize = config.pageSize);
 
     // start from 0
     int pageNumber;
     QSizeF pageSize;
     QList<LineShape> lines;
 
-    QPointF pagePosToScenePos(QPointF& pagePoint);
-    QPointF scenePosToPagePos(QPointF& scenePoint);
+    // like QGraphicsView::mapToScene
+    QPointF mapToScene(QPointF &pagePoint);
+    QPointF mapToPage(QPointF &scenePoint);
     void addLine(const LineShape& sceneLine);
     LineShapes sceneLineShapes();
 

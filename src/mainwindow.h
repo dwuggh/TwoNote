@@ -22,8 +22,6 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    int width = 1920;
-    int height = 1080;
 
 private:
     Ui::MainWindow *ui;

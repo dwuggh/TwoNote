@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QDir>
+#include <QSizeF>
 #include <QDebug>
 
 class Configs {
@@ -10,6 +11,7 @@ public:
     Configs();
     QDir tempDir;
     QDir baseDir;
+    QSizeF pageSize;
 };
 
 extern Configs config;

@@ -7,18 +7,13 @@ TPage::TPage(int pageNumber, QSizeF pageSize) {
     this->lines = LineShapes();
 }
 
-QPointF TPage::scenePosToPagePos(QPointF& scenePoint) {
-    return QPointF(
-		   scenePoint.x(),
-		   scenePoint.y() - pageNumber * pageSize.height()
-		   );
+QPointF TPage::mapToPage(QPointF &scenePoint) {
+  return QPointF(scenePoint.x(),
+                 scenePoint.y() - pageNumber * pageSize.height());
 }
 
-QPointF TPage::pagePosToScenePos(QPointF& pagePoint) {
-    return QPointF(
-		   pagePoint.x(),
-		   pagePoint.y() + pageNumber * pageSize.height()
-		   );
+QPointF TPage::mapToScene(QPointF &pagePoint) {
+  return QPointF(pagePoint.x(), pagePoint.y() + pageNumber * pageSize.height());
 }
 
 LineShapes TPage::sceneLineShapes() {
@@ -26,8 +21,8 @@ LineShapes TPage::sceneLineShapes() {
     for (LineShape line: lines) {
 	LineShape sceneLine(line.width, line.color);
 	for (QPointF point: line.points) {
-	    sceneLine.append(pagePosToScenePos(point));
-	}
+          sceneLine.append(mapToScene(point));
+        }
 	sceneLines.append(sceneLine);
     }
     return sceneLines;
@@ -36,7 +31,7 @@ LineShapes TPage::sceneLineShapes() {
 void TPage::addLine(const LineShape& sceneLine) {
     LineShape line(sceneLine.width, sceneLine.color);
     for (QPointF p: sceneLine.points) {
-	line.points.append(scenePosToPagePos(p));
+      line.points.append(mapToPage(p));
     }
     // qDebug() << "adding line" << line;
     lines.append(line);

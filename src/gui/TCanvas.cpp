@@ -10,7 +10,7 @@ TCanvas::TCanvas(QWidget* parent) : QGraphicsScene(parent) {
     pen.setColor(Qt::black);
     pen.setJoinStyle(Qt::RoundJoin);
     pen.setWidthF(3.0);
-    pageSize = QSizeF(1920, 3000);
+    pageSize = config.pageSize;
     setSceneRect(- pageSize.width() / 2, - pageSize.height() / 2, pageSize.width(), pageSize.height());
     // the default name is just "", need to specify file name when saving
     QString name = QDateTime::currentDateTime().toString("yyyy-MM-dd-hh:mm:ss");
