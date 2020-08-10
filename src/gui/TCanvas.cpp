@@ -7,7 +7,7 @@
 
 TCanvas::TCanvas(QWidget* parent) : QGraphicsScene(parent) {
     isDrawing = false;
-    pen.setColor(Qt::black);
+    pen.setColor(config.pageView.defaultPenColor);
     pen.setJoinStyle(Qt::RoundJoin);
     pen.setWidthF(3.0);
 
@@ -76,17 +76,14 @@ int TCanvas::newPage() {
 	     << "page: " << newPageIndex;
     pages.append(TPage(newPageIndex));
     // TPage& page = pages.last();
-    int margin = 50;
-    // this->setSceneRect(page.pageRect());
-    this->setSceneRect(- pageSize.width() / 2, - pageSize.height() / 2 - margin / 2,
-		       pageSize.width(), (newPageIndex + 1) * pageSize.height() + margin);
+    updateSceneRect();
     return newPageIndex;
 }
 
 void TCanvas::drawBackground(QPainter* painter, const QRectF &rect) {
-    painter->setBrush(QBrush(Qt::gray));
+    painter->setBrush(config.pageView.backgroundColor);
     painter->drawRect(rect);
-    painter->setBrush(QBrush(Qt::white));
+    painter->setBrush(config.pageView.pageColor);
     for (auto page: pages) {
 	painter->drawRect(page.pageRect());
     }
@@ -148,10 +145,21 @@ void TCanvas::paintLines(const LineShapes lines) {
     }
 }
 
+inline void TCanvas::updateSceneRect() {
+    int width = pageSize.width();
+    int height = pageSize.height();
+    int size = pages.size();
+    int margin = config.pageView.verticalMargin;
+    this->setSceneRect(
+		       - width / 2,
+		       - height / 2 - margin / 2,
+		       width,
+		       size * ( height + margin )
+		       );
+}
 void TCanvas::paintPages() {
     this->clear();
-    this->setSceneRect(- pageSize.width() / 2, - pageSize.height() / 2,
-		       pages.size() * pageSize.width(), pages.size() * pageSize.height());
+    updateSceneRect();
     for (TPage& page: this->pages) {
 	qDebug() << "painting page" << page.pageNumber;
 	qDebug() << "lines: " << page.sceneLineShapes();

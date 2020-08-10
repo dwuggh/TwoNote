@@ -75,6 +75,7 @@ private:
     void paintPages();
     bool contains(const QPointF& point) const;
     int choosedPage(QPointF& scenePoint);
+    void updateSceneRect();
     
 };
 

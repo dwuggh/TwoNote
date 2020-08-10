@@ -19,7 +19,13 @@ QPointF TPage::mapToScene(QPointF &pagePoint) {
 const QRectF TPage::pageRect() {
     qreal width = pageSize.width();
     qreal height = pageSize.height();
-    return QRectF(-width / 2, -height / 2 + pageNumber * height, width, height);
+    int margin = config.pageView.verticalMargin;
+    return QRectF(
+		  -width / 2,
+		  -height / 2 + pageNumber * ( height + margin ),
+		  width,
+		  height
+		  );
 }
 
 LineShapes TPage::sceneLineShapes() {
