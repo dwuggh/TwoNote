@@ -77,7 +77,7 @@ void TCanvas::newPage() {
 	     << "page: " << newPageIndex;
     pages.append(TPage(newPageIndex));
     this->setSceneRect(- pageSize.width() / 2, - pageSize.height() / 2,
-		       (newPageIndex + 1) * pageSize.width(), (newPageIndex + 1) * pageSize.height());
+		       pageSize.width(), (newPageIndex + 1) * pageSize.height());
 }
 
 void TCanvas::mousePressEvent(QGraphicsSceneMouseEvent *event) {
