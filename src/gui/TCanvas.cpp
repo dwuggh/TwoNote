@@ -117,15 +117,15 @@ void TCanvas::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     }
     else if (state == EditState::type && event->button() == Qt::LeftButton) {
 
-	qDebug() << this->focusItem();
+	qDebug() << this->focusItem() << this->items().length();
 	QGraphicsItem* newItem = itemAt(currentPoint, QTransform::fromScale(1, 1));
 	qDebug() << newItem;
-	if (newItem != nullptr) {
+	if (dynamic_cast<QGraphicsTextItem*>(newItem)) {
 	    setFocusItem(newItem);
 	    item = dynamic_cast<QGraphicsTextItem*>(newItem);
 	}
 	else {
-	    if (item != nullptr && item->document()->isEmpty()) {
+	    if (item && item->document()->isEmpty()) {
 		delete item; 
 	    }
             item = new QGraphicsTextItem;
@@ -157,6 +157,58 @@ void TCanvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
         isDrawing = false;
 	// pages[currentPageNumber].lines.append(currentLine);
 	pages[currentPageNumber].addLine(currentLine);
+    }
+}
+
+void TCanvas::dragEnterEvent(QGraphicsSceneDragDropEvent* event) {
+    qDebug() << "Scene::dragEnterEvent";
+    if (event->mimeData()->hasUrls()) {
+	event->acceptProposedAction();
+        if (contains(event->scenePos())) {
+	    currentPoint = event->scenePos();
+        }
+    }
+}
+
+void TCanvas::dragMoveEvent(QGraphicsSceneDragDropEvent* event) {
+    // qDebug() << "Scene::dragmoveEvent";
+    if (event->mimeData()->hasUrls()) {
+	event->acceptProposedAction();
+	// the dropEvent's event->scenePos is somewhat buggy, don't know why
+        if (contains(event->scenePos())) {
+	    currentPoint = event->scenePos();
+        }
+    }
+}
+
+void TCanvas::dropEvent(QGraphicsSceneDragDropEvent* event) {
+    const QMimeData* mimeData = event->mimeData();
+    // qDebug() << mimeData->hasImage();
+    if (mimeData->hasUrls()) {
+        event->setAccepted(true);
+        for (QUrl& url : mimeData->urls()) {
+	    qDebug() << "dropping image" << url;
+	    if (url.isLocalFile()) {
+		QPixmap pixmap(url.toLocalFile());
+		// pixmap = pixmap.scaled(200, 100);
+		QSize pSize = pixmap.size();
+		// if the image is too large, crop it
+		QGraphicsPixmapItem* pixmapItem = addPixmap(pixmap);
+		pixmapItem->setTransformationMode(Qt::SmoothTransformation);
+                pixmapItem->setFlag(QGraphicsItem::ItemIsSelectable);
+                pixmapItem->setFlag(QGraphicsItem::ItemIsMovable);
+                pixmapItem->setPos(currentPoint);
+                if (!contains(QPointF(currentPoint.x() + pSize.width(),
+                                      currentPoint.y() + pSize.height()))) {
+                    qreal factor = (pageSize.width() / 2 - currentPoint.x()) /
+                                   pSize.width();
+                    pixmapItem->setTransform(
+                        QTransform::fromScale(factor, factor));
+                }
+            }
+        }
+    } else {
+	event->setAccepted(false);
     }
 }
 
