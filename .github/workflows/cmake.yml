@@ -18,8 +18,8 @@ jobs:
       with:
         version: 5.15.0
         mirror: "http://mirrors.ocf.berkeley.edu/qt/"
-    - name: configure
-      run: ./configure
+    - name: get-cmake
+      uses: lukka/get-cmake@v3.18.0
     - name: make
       run: |
         mkdir build
