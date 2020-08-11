@@ -6,7 +6,6 @@
 #include <QWheelEvent>
 #include <QDebug>
 #include <QOpenGLWidget>
-#include <QtWidgets>
 #include <QFileInfo>
 #include <QFileDialog>
 #include "Configs.h"
@@ -20,8 +19,6 @@ Q_OBJECT
 
 public:
     explicit TView(QWidget *parent = nullptr);
-    QAction *drawModeAction;
-    QAction *dragModeAction;
     TCanvas* currentBuffer;
     void loadFile(const QString& name);
     void saveBuffer(const QString& name = "");
@@ -36,6 +33,7 @@ public:
 public slots:
     void enableDragMode(bool checked);
     void enableDrawMode(bool checked);
+    void enableTypeMode(bool checked);
     void save();
     void newPage();
     // void load();

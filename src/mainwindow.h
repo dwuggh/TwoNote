@@ -6,6 +6,7 @@
 #include <QScrollBar>
 #include <QtWidgets>
 #include <QFileDialog>
+#include <QActionGroup>
 #include "TCanvas.h"
 #include "TView.h"
 #include "Configs.h"
@@ -27,7 +28,11 @@ private:
     Ui::MainWindow *ui;
     TView* view;
     QToolBar* toolbar;
+    QActionGroup* editStateActionGroup;
     QAction* newPageAction;
+    QAction *drawModeAction;
+    QAction *dragModeAction;
+    QAction *typeModeAction;
 
     void setupMenu();
     void setupToolbar();

@@ -10,6 +10,8 @@
 #include "LineShape.h"
 #include <QSizeF>
 #include <QRectF>
+#include <QGraphicsTextItem>
+// #include "TTextItem.h"
 
 class TPage {
 
@@ -21,6 +23,7 @@ public:
     int pageNumber;
     QSizeF pageSize;
     QList<LineShape> lines;
+    // QList<QGraphicsTextItem> texts;
 
     // like QGraphicsView::mapToScene
     QPointF mapToScene(QPointF &pagePoint);

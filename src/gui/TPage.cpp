@@ -5,6 +5,7 @@ TPage::TPage(int pageNumber, QSizeF pageSize) {
     this->pageNumber = pageNumber;
     this->pageSize = pageSize;
     this->lines = LineShapes();
+    // this->texts = QList<QGraphicsTextItem>();
 }
 
 QPointF TPage::mapToPage(QPointF &scenePoint) {

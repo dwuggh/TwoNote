@@ -21,6 +21,9 @@ TCanvas::TCanvas(QWidget* parent) : QGraphicsScene(parent) {
     pageSize = config.pageView.pageSize;
     // add one page at start
     currentPageNumber = newPage();
+
+    state = EditState::draw;
+    item = nullptr;
 }
 
 
@@ -89,9 +92,10 @@ void TCanvas::drawBackground(QPainter* painter, const QRectF &rect) {
 }
 
 void TCanvas::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    if (event->button() == Qt::LeftButton && this->contains(event->scenePos())) {
+    currentPoint = event->scenePos();
+    if (!this->contains(currentPoint)) return;
+    if (state == EditState::draw && event->button() == Qt::LeftButton) {
 	isDrawing = true;
-	currentPoint = event->scenePos();
         qDebug() << "start at:" << currentPoint;
         qDebug() << "size:" << sceneRect();
         lastPoint = event->scenePos();
@@ -111,10 +115,33 @@ void TCanvas::mousePressEvent(QGraphicsSceneMouseEvent *event) {
         // qDebug() << this->sceneRect();
         return;
     }
+    else if (state == EditState::type && event->button() == Qt::LeftButton) {
+
+	qDebug() << this->focusItem();
+	QGraphicsItem* newItem = itemAt(currentPoint, QTransform::fromScale(1, 1));
+	qDebug() << newItem;
+	if (newItem != nullptr) {
+	    setFocusItem(newItem);
+	    item = dynamic_cast<QGraphicsTextItem*>(newItem);
+	}
+	else {
+	    if (item != nullptr && item->document()->isEmpty()) {
+		delete item; 
+	    }
+            item = new QGraphicsTextItem;
+            item->setDocument(new QTextDocument("", item));
+            // item->setTextCursor(QTextCursor());
+            item->setPos(event->scenePos());
+            item->setTextInteractionFlags(Qt::TextEditorInteraction);
+            addItem(item);
+            setFocusItem(item);
+        }
+    }
 }
 
 void TCanvas::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
-    if (event->buttons() == Qt::LeftButton && isDrawing && this->contains(event->scenePos())) {
+    if (!this->contains(event->scenePos())) return;
+    if (isDrawing && event->buttons() == Qt::LeftButton) {
 
 	lastPoint = currentPoint;
         currentPoint = event->scenePos();
@@ -125,7 +152,8 @@ void TCanvas::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void TCanvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
-    if (event->button() == Qt::LeftButton && isDrawing && this->contains(event->scenePos())) {
+    if (!this->contains(event->scenePos())) return;
+    if (isDrawing && event->button() == Qt::LeftButton) {
         isDrawing = false;
 	// pages[currentPageNumber].lines.append(currentLine);
 	pages[currentPageNumber].addLine(currentLine);

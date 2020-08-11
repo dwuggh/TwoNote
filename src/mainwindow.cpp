@@ -35,6 +35,7 @@ void MainWindow::setupMenu() {
 
 
 void MainWindow::setupToolbar() {
+
     
     newPageAction = new QAction;
     newPageAction->setText("new page");
@@ -42,12 +43,37 @@ void MainWindow::setupToolbar() {
     newPageAction->setCheckable(false);
     connect(newPageAction, &QAction::triggered, view, &TView::newPage);
 
+    drawModeAction = new QAction;
+    drawModeAction->setText(tr("draw"));
+    drawModeAction->setCheckable(true);
+    drawModeAction->setChecked(true);
+    dragModeAction = new QAction;
+    dragModeAction->setText(tr("drag"));
+    dragModeAction->setCheckable(true);
+    dragModeAction->setChecked(false);
+
+    typeModeAction = new QAction;
+    typeModeAction->setText(tr("type"));
+    typeModeAction->setCheckable(true);
+    typeModeAction->setChecked(false);
+
+    connect(drawModeAction, &QAction::triggered, view, &TView::enableDrawMode);
+    connect(dragModeAction, &QAction::triggered, view, &TView::enableDragMode);
+    connect(typeModeAction, &QAction::triggered, view, &TView::enableTypeMode);
+
     toolbar = new QToolBar;
     toolbar->setObjectName(QString::fromUtf8("toolbar"));
-    toolbar->setGeometry(QRect(0, -30, 720, 30));
+    toolbar->setGeometry(QRect(0, -30, 1920, 30));
     this->addToolBar(toolbar);
-    toolbar->addAction(view->drawModeAction);
-    toolbar->addAction(view->dragModeAction);
+
+    editStateActionGroup = new QActionGroup(toolbar);
+    editStateActionGroup->setExclusive(true);
+    editStateActionGroup->addAction(drawModeAction);
+    editStateActionGroup->addAction(dragModeAction);
+    editStateActionGroup->addAction(typeModeAction);
+    toolbar->addActions(editStateActionGroup->actions());
+
+    toolbar->addSeparator();
     toolbar->addAction(newPageAction);
 }
 

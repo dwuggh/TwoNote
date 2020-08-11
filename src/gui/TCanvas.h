@@ -9,6 +9,7 @@
 
 #include <QWidget>
 #include <QGraphicsScene>
+#include <QTextDocument>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneWheelEvent>
 #include <QGraphicsPathItem>
@@ -24,7 +25,12 @@
 #include "TPage.h"
 #include "Configs.h"
 
-// extern Configs config;
+
+enum EditState {
+    draw,
+    type,
+    view
+};
 
 class TCanvas : public QGraphicsScene {
 
@@ -37,6 +43,7 @@ public:
     QString name;
     // assign a uuid for further identification
     QUuid uuid;
+    EditState state;
 
 
     QString setName(const QString& name);
@@ -59,13 +66,13 @@ protected:
     // void paintEvent(QPaintEvent *) override;
 private:
     QFile file;
-    LineShapes lineShapes;
     LineShape currentLine;
     bool isDrawing = false;
     QPointF currentPoint;
     QPointF lastPoint;
     QPainterPath currentPath;
     QGraphicsPathItem* currentPathItem;
+    QGraphicsTextItem* item;
     QPen pen;
     QList<TPage> pages;
     int currentPageNumber;
@@ -79,6 +86,5 @@ private:
     
 };
 
-typedef QList<TCanvas> TCanvasList;
 
 #endif //TWONOTE_TCANVAS_H
