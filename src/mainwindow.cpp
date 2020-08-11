@@ -21,7 +21,6 @@ void MainWindow::setupCanvas() {
     view = new TView(this);
     setCentralWidget(view);
     view->show();
-    view->scale(0.8, 0.8);
 }
 
 void MainWindow::setupMenu() {
@@ -63,7 +62,11 @@ void MainWindow::create() {
 }
 
 void MainWindow::save() {
-    view->saveBuffer("");
+    if (view->currentBuffer->name.startsWith("/tmp")) {
+	saveAs();
+    } else {
+        view->saveBuffer("");
+    }
 }
 
 void MainWindow::saveAs() {

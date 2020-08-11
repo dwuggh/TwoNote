@@ -46,6 +46,7 @@ protected:
 private:
     QFile file;
     QString bufferName;
+    qreal currentScale = 0.8;
     // treat canvases as different buffer
     QList<TCanvas*> bufferList;
 };

@@ -34,7 +34,7 @@ public:
     explicit TCanvas(QWidget *parent = nullptr);
     TCanvas(const QString& name, QWidget *parent = nullptr);
     // buffer name can be different from file name
-    QString bufferName;
+    QString name;
     // assign a uuid for further identification
     QUuid uuid;
 

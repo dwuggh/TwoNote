@@ -14,8 +14,8 @@ TCanvas::TCanvas(QWidget* parent) : QGraphicsScene(parent) {
     // the default name is just "", need to specify file name when saving
     QString name = QDateTime::currentDateTime().toString("yyyy-MM-dd-hh:mm:ss");
     // store in temp file
-    setName(config.tempDir.absolutePath() + name);
-    qDebug() << "creating new buffer:" << bufferName;
+    setName(config.tempDir.absolutePath() + "/" + name);
+    qDebug() << "creating new buffer:" << name;
     uuid = QUuid::createUuid();
 
     pageSize = config.pageView.pageSize;
@@ -37,19 +37,18 @@ TCanvas::TCanvas(const QString& name, QWidget* parent) : TCanvas(parent) {
 }
 
 QString TCanvas::setName(const QString& name) {
-
-    QString oldName = bufferName;
+    QString oldName = name;
     QString filename = name;
     if (QFileInfo(name).suffix() != "tnote") {
 	filename = name + ".tnote";
     }
-    bufferName = filename;
+    this->name = filename;
     file.setFileName(QFileInfo(filename).absoluteFilePath());
     return oldName;
 }
 
 void TCanvas::save() {
-    qDebug() << "saving" << this->bufferName;
+    qDebug() << "saving" << this->name;
     file.open(QIODevice::WriteOnly);
     QDataStream out(&file);
     out << *this;
@@ -57,23 +56,23 @@ void TCanvas::save() {
 }
 
 void TCanvas::saveAs(const QString& name) {
-    qDebug() << "saving " << this->bufferName << "as:" << name;
+    qDebug() << "saving " << this->name << "as:" << name;
     file.setFileName(name);
     file.open(QIODevice::WriteOnly);
     QDataStream out(&file);
     out << *this;
     file.close();
-    if (bufferName == "") {
-	bufferName = name;
+    if (this->name.startsWith("/tmp") || this->name == "") {
+	this->name = name;
     } else {
-	file.setFileName(bufferName);
+	file.setFileName(name);
     }
 }
 
 int TCanvas::newPage() {
     int newPageIndex = pages.size();
-    qDebug() << "new page for buffer:" << this->bufferName
-	     << "page: " << newPageIndex;
+    qDebug() << "new page for buffer:" << this->name
+             << "page: " << newPageIndex;
     pages.append(TPage(newPageIndex));
     // TPage& page = pages.last();
     updateSceneRect();
@@ -192,11 +191,9 @@ void TCanvas::wheelEvent(QGraphicsSceneWheelEvent *event) {
 }
 
 QDebug operator<<(QDebug argument, const TCanvas &obj) {
-    argument.nospace()
-	<< "uuid: " << obj.uuid
-	<< "file: " << obj.bufferName
-	<< "," << obj.pages;
-    return argument.space();
+  argument.nospace() << "uuid: " << obj.uuid << "file: " << obj.name << ","
+                     << obj.pages;
+  return argument.space();
 }
 
 QDataStream &operator>>(QDataStream &in, TCanvas &obj) {

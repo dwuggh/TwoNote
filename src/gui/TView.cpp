@@ -20,17 +20,34 @@ TView::TView(QWidget* parent) : QGraphicsView(parent) {
     
     connect(drawModeAction, &QAction::triggered, this, &TView::enableDrawMode);
     connect(dragModeAction, &QAction::triggered, this, &TView::enableDragMode);
+    currentScale = 0.8;
+    setTransform(QTransform::fromScale(currentScale, currentScale));
+    // qDebug() << transform();
     
 }
 
 void TView::wheelEvent(QWheelEvent *event) {
     if (event->modifiers() & Qt::ControlModifier) {
-	if (event->angleDelta().y() > 0) {
-	    // zoom
-	}
+	int ds = event->angleDelta().y();
+	zoom(ds);
+	// if (ds) {
+	//     // zoom
+	// }
     } else {
 	QGraphicsView::wheelEvent(event);
     }
+}
+
+void TView::zoom(int ds) {
+    // scaling threshold, prevent flip
+    if (currentScale < 0.1 && ds < 0) {
+	return;
+    }
+    qreal factor = ds * 0.04 / 360;
+    currentScale = currentScale + factor;
+    // currentScale = factor;
+    qDebug() << "from" << currentScale - factor << "scaling to:" << currentScale;
+    setTransform(QTransform::fromScale(currentScale, currentScale));
 }
 
 void TView::enableDragMode(bool checked) {
@@ -58,7 +75,7 @@ void TView::enableDrawMode(bool checked) {
 }
 
 void TView::save() {
-    if (currentBuffer->bufferName != "") {
+    if (currentBuffer->name != "") {
 	currentBuffer->save();
     }
 }
@@ -77,26 +94,26 @@ void TView::loadFile(const QString& name) {
 }
 
 void TView::saveBuffer(const QString &name) {
-    if (name != "") {
-	currentBuffer->saveAs(name);
+    if (name == "") {
+        currentBuffer->save();
     } else {
-	currentBuffer->save();
+        currentBuffer->saveAs(name);
     }
 }
 
 void TView::switchBuffer(const QString& name) {
     for (auto buffer: bufferList) {
-	if (buffer->bufferName == name) {
-	    currentBuffer = buffer;
-	    bufferName = buffer->bufferName;
-	    this->setScene(currentBuffer);
-	    return;
-        }
+      if (buffer->name == name) {
+        currentBuffer = buffer;
+        bufferName = buffer->name;
+        this->setScene(currentBuffer);
+        return;
+      }
     }
     currentBuffer = new TCanvas(name, this);
     this->setScene(currentBuffer);
-    bufferName = currentBuffer->bufferName;
-    qDebug() << "switch to buffer:" << currentBuffer->bufferName;
+    bufferName = currentBuffer->name;
+    qDebug() << "switch to buffer:" << currentBuffer->name;
     bufferList.append(currentBuffer);
 }
 
@@ -107,8 +124,8 @@ void TView::switchBuffer() {
     // currentBuffer->setSceneRect(QRectF(- width / 2, height / 2, width, height));
     this->setScene(currentBuffer);
     this->centerOn(0, 0);
-    bufferName = currentBuffer->bufferName;
-    qDebug() << "switch to buffer:" << currentBuffer->bufferName;
+    bufferName = currentBuffer->name;
+    qDebug() << "switch to buffer:" << currentBuffer->name;
     bufferList.append(currentBuffer);
 }
 
