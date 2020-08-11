@@ -18,7 +18,7 @@ TCanvas::TCanvas(QWidget* parent) : QGraphicsScene(parent) {
     qDebug() << "creating new buffer:" << bufferName;
     uuid = QUuid::createUuid();
 
-    pageSize = config.pageSize;
+    pageSize = config.pageView.pageSize;
     // add one page at start
     currentPageNumber = newPage();
 }

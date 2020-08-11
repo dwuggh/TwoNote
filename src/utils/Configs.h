@@ -19,11 +19,13 @@ struct PageView {
 
 class Configs {
 public:
-  Configs();
-  QDir tempDir;
-  QDir baseDir;
-  QSizeF pageSize;
-  PageView pageView;
+    Configs();
+    QDir tempDir;
+    QDir baseDir;
+    // QSizeF pageSize;
+    PageView pageView;
+
+    friend QDebug operator<<(QDebug argument, const Configs &obj);
 };
 
 extern Configs config;

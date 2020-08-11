@@ -15,7 +15,7 @@ class TPage {
 
 
 public:
-    TPage(int pageNumber = 0, QSizeF pageSize = config.pageSize);
+    TPage(int pageNumber = 0, QSizeF pageSize = config.pageView.pageSize);
 
     // start from 0
     int pageNumber;

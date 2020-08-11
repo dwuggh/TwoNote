@@ -11,7 +11,7 @@ Configs::Configs() {
     baseDir.cd("./TwoNote/");
 
     // default page size
-    pageSize = QSizeF(1920, 3000);
+    // pageSize = QSizeF(1920, 3000);
 
     pageView = PageView{
         .pageSize         = QSizeF(1920, 3000),
@@ -23,11 +23,15 @@ Configs::Configs() {
         .defaultPenWidth  = 3.0,
     };
 
-    qDebug() << "config:"
-	     << "base directory: " << baseDir
-	     << "temp directory: " << tempDir
-	     << "\n";
+    qDebug() << *this;
 }
 
+QDebug operator<<(QDebug argument, const Configs &obj) {
+    argument.nospace() << "config:"
+		       << "base directory: " << obj.baseDir
+		       << "temp directory: " << obj.tempDir << "\n"
+		       << "pages view config: " << obj.pageView.pageSize;
+    return argument.space();
+}
 
 Configs config = Configs();
