@@ -83,6 +83,7 @@ private:
     int pageCounts;
     QSizeF pageSize;
     void paintLines(const LineShapes lines);
+    void paintPixmaps(const QList<PixmapData> pixmaps);
     void paintPages();
     bool contains(const QPointF& point) const;
     int choosedPage(QPointF& scenePoint);

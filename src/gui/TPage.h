@@ -13,6 +13,18 @@
 #include <QGraphicsTextItem>
 // #include "TTextItem.h"
 
+class PixmapData {
+public:
+    PixmapData(QPixmap pixmap = QPixmap(), QPointF position = QPointF(0, 0), qreal scaleX = 1.0, qreal scaleY = 1.0);
+    QPointF position;
+    qreal scaleX;
+    qreal scaleY;
+    QPixmap pixmap;
+    friend QDebug operator<<(QDebug argument, const PixmapData &obj);
+    friend QDataStream &operator>>(QDataStream &in, PixmapData &obj);
+    friend QDataStream &operator<<(QDataStream &out, const PixmapData &obj);
+};
+
 class TPage {
 
 
@@ -23,12 +35,14 @@ public:
     int pageNumber;
     QSizeF pageSize;
     QList<LineShape> lines;
+    QList<PixmapData> pixmaps;
     // QList<QGraphicsTextItem> texts;
 
     // like QGraphicsView::mapToScene
-    QPointF mapToScene(QPointF &pagePoint);
-    QPointF mapToPage(QPointF &scenePoint);
+    QPointF mapToScene(const QPointF &pagePoint);
+    QPointF mapToPage(const QPointF &scenePoint);
     void addLine(const LineShape& sceneLine);
+    void addPixmap(const PixmapData& pixmapData);
     const QRectF pageRect();
     LineShapes sceneLineShapes();
 

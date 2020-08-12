@@ -1,7 +1,3 @@
-//
-// Created by dwuggh on 8/3/20.
-//
-
 #include "TCanvas.h"
 
 
@@ -115,6 +111,7 @@ void TCanvas::mousePressEvent(QGraphicsSceneMouseEvent *event) {
         // qDebug() << this->sceneRect();
         return;
     }
+    // add typed text
     else if (state == EditState::type && event->button() == Qt::LeftButton) {
 
 	qDebug() << this->focusItem() << this->items().length();
@@ -187,7 +184,7 @@ void TCanvas::dropEvent(QGraphicsSceneDragDropEvent* event) {
     if (mimeData->hasUrls()) {
         event->setAccepted(true);
         for (QUrl& url : mimeData->urls()) {
-	    qDebug() << "dropping image" << url;
+	    qDebug() << "dropping image: " << url;
 	    if (url.isLocalFile()) {
 		QPixmap pixmap(url.toLocalFile());
 		// pixmap = pixmap.scaled(200, 100);
@@ -198,13 +195,17 @@ void TCanvas::dropEvent(QGraphicsSceneDragDropEvent* event) {
                 pixmapItem->setFlag(QGraphicsItem::ItemIsSelectable);
                 pixmapItem->setFlag(QGraphicsItem::ItemIsMovable);
                 pixmapItem->setPos(currentPoint);
+		qreal factor = 1;
                 if (!contains(QPointF(currentPoint.x() + pSize.width(),
                                       currentPoint.y() + pSize.height()))) {
-                    qreal factor = (pageSize.width() / 2 - currentPoint.x()) /
+                    factor = (pageSize.width() / 2 - currentPoint.x()) /
                                    pSize.width();
                     pixmapItem->setTransform(
                         QTransform::fromScale(factor, factor));
                 }
+		qDebug() << factor;
+                pages[currentPageNumber].addPixmap(
+                    PixmapData(pixmap, currentPoint, factor, factor));
             }
         }
     } else {
@@ -221,6 +222,17 @@ void TCanvas::paintLines(const LineShapes lines) {
         currentPath.quadTo(points[i], points[i + 1]);
       }
       this->addPath(currentPath, line.pen);
+    }
+}
+
+void TCanvas::paintPixmaps(const QList<PixmapData> pixmaps) {
+    for (auto pixmap: pixmaps) {
+	QGraphicsPixmapItem* pixmapItem = addPixmap(pixmap.pixmap);
+        pixmapItem->setTransformationMode(Qt::SmoothTransformation);
+        pixmapItem->setFlag(QGraphicsItem::ItemIsSelectable);
+        pixmapItem->setFlag(QGraphicsItem::ItemIsMovable);
+        pixmapItem->setPos(pixmap.position);
+	pixmapItem->setTransform(QTransform::fromScale(pixmap.scaleX, pixmap.scaleY));
     }
 }
 
@@ -242,7 +254,9 @@ void TCanvas::paintPages() {
     for (TPage& page: this->pages) {
 	qDebug() << "painting page" << page.pageNumber;
 	qDebug() << "lines: " << page.sceneLineShapes();
+	qDebug() << "pixmaps: " << page.pixmaps;
 	paintLines(page.sceneLineShapes());
+	paintPixmaps(page.pixmaps);
     }
 }
 

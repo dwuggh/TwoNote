@@ -5,15 +5,16 @@ TPage::TPage(int pageNumber, QSizeF pageSize) {
     this->pageNumber = pageNumber;
     this->pageSize = pageSize;
     this->lines = LineShapes();
+    // this->pixmaps = QList<PixmapData>();
     // this->texts = QList<QGraphicsTextItem>();
 }
 
-QPointF TPage::mapToPage(QPointF &scenePoint) {
+QPointF TPage::mapToPage(const QPointF &scenePoint) {
   return QPointF(scenePoint.x(),
                  scenePoint.y() - pageNumber * pageSize.height());
 }
 
-QPointF TPage::mapToScene(QPointF &pagePoint) {
+QPointF TPage::mapToScene(const QPointF &pagePoint) {
   return QPointF(pagePoint.x(), pagePoint.y() + pageNumber * pageSize.height());
 }
 
@@ -50,16 +51,45 @@ void TPage::addLine(const LineShape &sceneLine) {
   lines.append(line);
 }
 
-QDebug operator<<(QDebug argument, const TPage &obj) {
-  argument.nospace() << "page: " << obj.pageNumber << ", lines: " << obj.lines;
-  return argument.space();
+void TPage::addPixmap(const PixmapData& pixmapData) {
+    PixmapData pixmap(pixmapData.pixmap, mapToPage(pixmapData.position),
+                      pixmapData.scaleX, pixmapData.scaleY);
+    pixmaps.append(pixmap);
 }
 
-QDataStream &operator>>(QDataStream &in, TPage &obj) {
-  in >> obj.pageNumber >> obj.pageSize >> obj.lines;
-  return in;
+QDebug operator<<(QDebug argument, const TPage& obj) {
+    argument.nospace() << "page: " << obj.pageNumber
+                       << "lines: " << obj.lines
+		       << "pixmaps:" << obj.pixmaps;
+    return argument.space();
 }
-QDataStream &operator<<(QDataStream &out, const TPage &obj) {
-  out << obj.pageNumber << obj.pageSize << obj.lines;
-  return out;
+
+QDataStream& operator>>(QDataStream& in, TPage& obj) {
+    in >> obj.pageNumber >> obj.pageSize >> obj.lines >> obj.pixmaps;
+    return in;
+}
+QDataStream& operator<<(QDataStream& out, const TPage& obj) {
+    out << obj.pageNumber << obj.pageSize << obj.lines << obj.pixmaps;
+    return out;
+}
+
+PixmapData::PixmapData(QPixmap pixmap, QPointF position, qreal scaleX,
+                       qreal scaleY)
+    : pixmap(pixmap), position(position), scaleX(scaleX), scaleY(scaleY){};
+
+QDebug operator<<(QDebug argument, const PixmapData& obj) {
+    argument.nospace() << "pixmap: " << obj.pixmap
+		       << "position: " << obj.position
+		       << "scale: " << obj.scaleX << " " << obj.scaleY;
+    return argument.space();
+}
+
+QDataStream& operator>>(QDataStream& in, PixmapData& obj) {
+    in >> obj.pixmap >> obj.position >> obj.scaleX >> obj.scaleY;
+    return in;
+}
+
+QDataStream& operator<<(QDataStream& out, const PixmapData& obj) {
+    out << obj.pixmap << obj.position << obj.scaleX << obj.scaleY;
+    return out;
 }
