@@ -88,5 +88,9 @@ cmake-build-debug/
 .vscode
 .dir-locals.el
 
-# ccls cache
+# lsp cache
 .ccls-cache
+.clangd
+
+
+TAGS

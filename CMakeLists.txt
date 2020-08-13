@@ -52,6 +52,8 @@ file (GLOB_RECURSE TwoNote_SOURCES
   src/gui/TCanvas.cpp
   src/gui/TView.h
   src/gui/TView.cpp
+  src/gui/TPage.h
+  src/gui/TPage.cpp
   src/mainwindow.ui
   src/mainwindow.h
   src/mainwindow.cpp
@@ -76,5 +78,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${QT_LIBRARY})
 target_include_directories(${PROJECT_NAME} PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/src
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/utils
   ${CMAKE_CURRENT_SOURCE_DIR}/src/gui
   ${CMAKE_BINARY_DIR})

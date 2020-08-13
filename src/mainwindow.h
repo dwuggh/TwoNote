@@ -1,37 +1,45 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#pragma once
 
-#include <QMainWindow>
+#include "Configs.h"
 #include "TCanvas.h"
-#include <QOpenGLWidget>
 #include "TView.h"
+#include <QActionGroup>
+#include <QFileDialog>
+#include <QMainWindow>
+#include <QOpenGLWidget>
 #include <QScrollBar>
 #include <QtWidgets>
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow; }
+namespace Ui {
+class MainWindow;
+}
 QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow {
     Q_OBJECT
 
-public:
-    explicit MainWindow(QWidget *parent = nullptr);
-    ~MainWindow() override;
-    int width = 1920;
-    int height = 1080;
+  public:
+    explicit MainWindow(QWidget* parent = nullptr);
+    ~MainWindow();
 
-private:
-    Ui::MainWindow *ui;
-    QMenuBar* menubar;
-    QToolBar* toolbar;
+  private:
+    Ui::MainWindow* ui;
     TView* view;
-    TCanvas* scene;
+    QToolBar* toolbar;
+    QActionGroup* editStateActionGroup;
+    QAction* newPageAction;
+    QAction* drawModeAction;
+    QAction* dragModeAction;
+    QAction* typeModeAction;
 
     void setupMenu();
     void setupToolbar();
     void setupCanvas();
-    
+
+  private slots:
+    void load();
+    void save();
+    void saveAs();
+    void create();
 };
-#endif // MAINWINDOW_H

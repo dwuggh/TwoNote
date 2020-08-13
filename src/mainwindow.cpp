@@ -1,62 +1,100 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
-{
-    // ui->setupUi(this);
+MainWindow::MainWindow(QWidget* parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow) {
+    this->showMaximized();
+    ui->setupUi(this);
 
     // this->showFullScreen();
-    this->showMaximized();
 
     this->setupCanvas();
     this->setupToolbar();
     this->setupMenu();
-    
-
 }
 
 void MainWindow::setupCanvas() {
-    
+
     view = new TView(this);
-    scene = new TCanvas(view);
-    view->setScene(scene);
-    scene->setSceneRect(QRectF(-width / 2, height / 2, width, height));
     setCentralWidget(view);
     view->show();
 }
 
 void MainWindow::setupMenu() {
-    menubar = new QMenuBar(this);
-    menubar->setObjectName("menubar");
-    menubar->setGeometry(QRect(0, 0, 720, 30));
-    this->setMenuBar(menubar);
 
-    QMenu* file = new QMenu(menubar);
-    file->setObjectName("file");
-    file->setTitle("file");
-
-    file->addAction(scene->saveAction);
-    file->addAction(scene->loadAction);
-
-    menubar->addMenu(file);
-
-    QMenu* preference = new QMenu(menubar);
-    
+    connect(ui->saveBufferAction, &QAction::triggered, this, &MainWindow::save);
+    connect(ui->openFileAction, &QAction::triggered, this, &MainWindow::load);
+    connect(ui->saveBufferAsAction, &QAction::triggered, this,
+            &MainWindow::saveAs);
+    connect(ui->createBufferAction, &QAction::triggered, this,
+            &MainWindow::create);
+    // connect(load, &QAction::triggered, this->view, &TView::load);
 }
 
 void MainWindow::setupToolbar() {
-    
+
+    newPageAction = new QAction;
+    newPageAction->setText("new page");
+    newPageAction->setChecked(false);
+    newPageAction->setCheckable(false);
+    connect(newPageAction, &QAction::triggered, view, &TView::newPage);
+
+    drawModeAction = new QAction;
+    drawModeAction->setText(tr("draw"));
+    drawModeAction->setCheckable(true);
+    drawModeAction->setChecked(true);
+    dragModeAction = new QAction;
+    dragModeAction->setText(tr("drag"));
+    dragModeAction->setCheckable(true);
+    dragModeAction->setChecked(false);
+
+    typeModeAction = new QAction;
+    typeModeAction->setText(tr("type"));
+    typeModeAction->setCheckable(true);
+    typeModeAction->setChecked(false);
+
+    connect(drawModeAction, &QAction::triggered, view, &TView::enableDrawMode);
+    connect(dragModeAction, &QAction::triggered, view, &TView::enableDragMode);
+    connect(typeModeAction, &QAction::triggered, view, &TView::enableTypeMode);
+
     toolbar = new QToolBar;
     toolbar->setObjectName(QString::fromUtf8("toolbar"));
-    toolbar->setGeometry(QRect(0, -30, 720, 30));
+    toolbar->setGeometry(QRect(0, -30, 1920, 30));
     this->addToolBar(toolbar);
-    toolbar->addAction(view->drawModeAction);
-    toolbar->addAction(view->dragModeAction);
+
+    editStateActionGroup = new QActionGroup(toolbar);
+    editStateActionGroup->setExclusive(true);
+    editStateActionGroup->addAction(drawModeAction);
+    editStateActionGroup->addAction(dragModeAction);
+    editStateActionGroup->addAction(typeModeAction);
+    toolbar->addActions(editStateActionGroup->actions());
+
+    toolbar->addSeparator();
+    toolbar->addAction(newPageAction);
 }
 
-MainWindow::~MainWindow()
-{
-    delete ui;
+void MainWindow::load() {
+    QString name = QFileDialog::getOpenFileName(this, tr("open file"),
+                                                config.baseDir.absolutePath(),
+                                                tr("twonote files (*.tnote)"));
+    view->loadFile(name);
 }
+
+void MainWindow::create() { view->switchBuffer(); }
+
+void MainWindow::save() {
+    if (view->currentBuffer->name.startsWith("/tmp")) {
+        saveAs();
+    } else {
+        view->saveBuffer("");
+    }
+}
+
+void MainWindow::saveAs() {
+    QString name = QFileDialog::getSaveFileName(this, tr("save file"),
+                                                config.baseDir.absolutePath(),
+                                                tr("twonote files (*.tnote)"));
+    view->saveBuffer(name);
+}
+
+MainWindow::~MainWindow() { delete ui; }
