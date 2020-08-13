@@ -1,6 +1,5 @@
 #include "TCanvas.h"
 
-
 TCanvas::TCanvas(QWidget* parent) : QGraphicsScene(parent) {
     isDrawing = false;
     pen.setColor(config.pageView.defaultPenColor);
@@ -22,16 +21,15 @@ TCanvas::TCanvas(QWidget* parent) : QGraphicsScene(parent) {
     item = nullptr;
 }
 
-
 TCanvas::TCanvas(const QString& name, QWidget* parent) : TCanvas(parent) {
     setName(name);
     // if file exists, load its content from disk
     if (file.exists()) {
-	file.open(QIODevice::ReadOnly);
-	QDataStream in(&file);
-	in >> pages;
-	file.close();
-	this->paintPages();
+        file.open(QIODevice::ReadOnly);
+        QDataStream in(&file);
+        in >> pages;
+        file.close();
+        this->paintPages();
     }
 }
 
@@ -39,7 +37,7 @@ QString TCanvas::setName(const QString& name) {
     QString oldName = name;
     QString filename = name;
     if (QFileInfo(name).suffix() != "tnote") {
-	filename = name + ".tnote";
+        filename = name + ".tnote";
     }
     this->name = filename;
     file.setFileName(QFileInfo(filename).absoluteFilePath());
@@ -62,9 +60,9 @@ void TCanvas::saveAs(const QString& name) {
     out << *this;
     file.close();
     if (this->name.startsWith("/tmp") || this->name == "") {
-	this->name = name;
+        this->name = name;
     } else {
-	file.setFileName(name);
+        file.setFileName(name);
     }
 }
 
@@ -78,20 +76,21 @@ int TCanvas::newPage() {
     return newPageIndex;
 }
 
-void TCanvas::drawBackground(QPainter* painter, const QRectF &rect) {
+void TCanvas::drawBackground(QPainter* painter, const QRectF& rect) {
     painter->setBrush(config.pageView.backgroundColor);
     painter->drawRect(rect);
     painter->setBrush(config.pageView.pageColor);
-    for (auto page: pages) {
-	painter->drawRect(page.pageRect());
+    for (auto page : pages) {
+        painter->drawRect(page.pageRect());
     }
 }
 
-void TCanvas::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+void TCanvas::mousePressEvent(QGraphicsSceneMouseEvent* event) {
     currentPoint = event->scenePos();
-    if (!this->contains(currentPoint)) return;
+    if (!this->contains(currentPoint))
+        return;
     if (state == EditState::draw && event->button() == Qt::LeftButton) {
-	isDrawing = true;
+        isDrawing = true;
         qDebug() << "start at:" << currentPoint;
         qDebug() << "size:" << sceneRect();
         lastPoint = event->scenePos();
@@ -114,17 +113,17 @@ void TCanvas::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     // add typed text
     else if (state == EditState::type && event->button() == Qt::LeftButton) {
 
-	qDebug() << this->focusItem() << this->items().length();
-	QGraphicsItem* newItem = itemAt(currentPoint, QTransform::fromScale(1, 1));
-	qDebug() << newItem;
-	if (dynamic_cast<QGraphicsTextItem*>(newItem)) {
-	    setFocusItem(newItem);
-	    item = dynamic_cast<QGraphicsTextItem*>(newItem);
-	}
-	else {
-	    if (item && item->document()->isEmpty()) {
-		delete item; 
-	    }
+        qDebug() << this->focusItem() << this->items().length();
+        QGraphicsItem* newItem =
+            itemAt(currentPoint, QTransform::fromScale(1, 1));
+        qDebug() << newItem;
+        if (dynamic_cast<QGraphicsTextItem*>(newItem)) {
+            setFocusItem(newItem);
+            item = dynamic_cast<QGraphicsTextItem*>(newItem);
+        } else {
+            if (item && item->document()->isEmpty()) {
+                delete item;
+            }
             item = new QGraphicsTextItem;
             item->setDocument(new QTextDocument("", item));
             // item->setTextCursor(QTextCursor());
@@ -136,11 +135,12 @@ void TCanvas::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     }
 }
 
-void TCanvas::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
-    if (!this->contains(event->scenePos())) return;
+void TCanvas::mouseMoveEvent(QGraphicsSceneMouseEvent* event) {
+    if (!this->contains(event->scenePos()))
+        return;
     if (isDrawing && event->buttons() == Qt::LeftButton) {
 
-	lastPoint = currentPoint;
+        lastPoint = currentPoint;
         currentPoint = event->scenePos();
         currentLine.append(currentPoint);
         currentPath.quadTo(lastPoint, currentPoint);
@@ -148,21 +148,22 @@ void TCanvas::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
     }
 }
 
-void TCanvas::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
-    if (!this->contains(event->scenePos())) return;
+void TCanvas::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
+    if (!this->contains(event->scenePos()))
+        return;
     if (isDrawing && event->button() == Qt::LeftButton) {
         isDrawing = false;
-	// pages[currentPageNumber].lines.append(currentLine);
-	pages[currentPageNumber].addLine(currentLine);
+        // pages[currentPageNumber].lines.append(currentLine);
+        pages[currentPageNumber].addLine(currentLine);
     }
 }
 
 void TCanvas::dragEnterEvent(QGraphicsSceneDragDropEvent* event) {
     qDebug() << "Scene::dragEnterEvent";
     if (event->mimeData()->hasUrls()) {
-	event->acceptProposedAction();
+        event->acceptProposedAction();
         if (contains(event->scenePos())) {
-	    currentPoint = event->scenePos();
+            currentPoint = event->scenePos();
         }
     }
 }
@@ -170,10 +171,10 @@ void TCanvas::dragEnterEvent(QGraphicsSceneDragDropEvent* event) {
 void TCanvas::dragMoveEvent(QGraphicsSceneDragDropEvent* event) {
     // qDebug() << "Scene::dragmoveEvent";
     if (event->mimeData()->hasUrls()) {
-	event->acceptProposedAction();
-	// the dropEvent's event->scenePos is somewhat buggy, don't know why
+        event->acceptProposedAction();
+        // the dropEvent's event->scenePos is somewhat buggy, don't know why
         if (contains(event->scenePos())) {
-	    currentPoint = event->scenePos();
+            currentPoint = event->scenePos();
         }
     }
 }
@@ -184,55 +185,56 @@ void TCanvas::dropEvent(QGraphicsSceneDragDropEvent* event) {
     if (mimeData->hasUrls()) {
         event->setAccepted(true);
         for (QUrl& url : mimeData->urls()) {
-	    qDebug() << "dropping image: " << url;
-	    if (url.isLocalFile()) {
-		QPixmap pixmap(url.toLocalFile());
-		// pixmap = pixmap.scaled(200, 100);
-		QSize pSize = pixmap.size();
-		// if the image is too large, crop it
-		QGraphicsPixmapItem* pixmapItem = addPixmap(pixmap);
-		pixmapItem->setTransformationMode(Qt::SmoothTransformation);
+            qDebug() << "dropping image: " << url;
+            if (url.isLocalFile()) {
+                QPixmap pixmap(url.toLocalFile());
+                // pixmap = pixmap.scaled(200, 100);
+                QSize pSize = pixmap.size();
+                // if the image is too large, crop it
+                QGraphicsPixmapItem* pixmapItem = addPixmap(pixmap);
+                pixmapItem->setTransformationMode(Qt::SmoothTransformation);
                 pixmapItem->setFlag(QGraphicsItem::ItemIsSelectable);
                 pixmapItem->setFlag(QGraphicsItem::ItemIsMovable);
                 pixmapItem->setPos(currentPoint);
-		qreal factor = 1;
+                qreal factor = 1;
                 if (!contains(QPointF(currentPoint.x() + pSize.width(),
                                       currentPoint.y() + pSize.height()))) {
                     factor = (pageSize.width() / 2 - currentPoint.x()) /
-                                   pSize.width();
+                             pSize.width();
                     pixmapItem->setTransform(
                         QTransform::fromScale(factor, factor));
                 }
-		qDebug() << factor;
+                qDebug() << factor;
                 pages[currentPageNumber].addPixmap(
                     PixmapData(pixmap, currentPoint, factor, factor));
             }
         }
     } else {
-	event->setAccepted(false);
+        event->setAccepted(false);
     }
 }
 
 void TCanvas::paintLines(const LineShapes lines) {
     for (LineShape line : lines) {
-      currentPath = QPainterPath();
-      QList<QPointF> points = line.points;
-      currentPath.moveTo(points[0]);
-      for (int i = 1; i < points.length() - 2; i++) {
-        currentPath.quadTo(points[i], points[i + 1]);
-      }
-      this->addPath(currentPath, line.pen);
+        currentPath = QPainterPath();
+        QList<QPointF> points = line.points;
+        currentPath.moveTo(points[0]);
+        for (int i = 1; i < points.length() - 2; i++) {
+            currentPath.quadTo(points[i], points[i + 1]);
+        }
+        this->addPath(currentPath, line.pen);
     }
 }
 
 void TCanvas::paintPixmaps(const QList<PixmapData> pixmaps) {
-    for (auto pixmap: pixmaps) {
-	QGraphicsPixmapItem* pixmapItem = addPixmap(pixmap.pixmap);
+    for (auto pixmap : pixmaps) {
+        QGraphicsPixmapItem* pixmapItem = addPixmap(pixmap.pixmap);
         pixmapItem->setTransformationMode(Qt::SmoothTransformation);
         pixmapItem->setFlag(QGraphicsItem::ItemIsSelectable);
         pixmapItem->setFlag(QGraphicsItem::ItemIsMovable);
         pixmapItem->setPos(pixmap.position);
-	pixmapItem->setTransform(QTransform::fromScale(pixmap.scaleX, pixmap.scaleY));
+        pixmapItem->setTransform(
+            QTransform::fromScale(pixmap.scaleX, pixmap.scaleY));
     }
 }
 
@@ -241,62 +243,56 @@ inline void TCanvas::updateSceneRect() {
     int height = pageSize.height();
     int size = pages.size();
     int margin = config.pageView.verticalMargin;
-    this->setSceneRect(
-		       - width / 2,
-		       - height / 2 - margin / 2,
-		       width,
-		       size * ( height + margin )
-		       );
+    this->setSceneRect(-width / 2, -height / 2 - margin / 2, width,
+                       size * (height + margin));
 }
 void TCanvas::paintPages() {
     this->clear();
     updateSceneRect();
-    for (TPage& page: this->pages) {
-	qDebug() << "painting page" << page.pageNumber;
-	qDebug() << "lines: " << page.sceneLineShapes();
-	qDebug() << "pixmaps: " << page.pixmaps;
-	paintLines(page.sceneLineShapes());
-	paintPixmaps(page.pixmaps);
+    for (TPage& page : this->pages) {
+        qDebug() << "painting page" << page.pageNumber;
+        qDebug() << "lines: " << page.sceneLineShapes();
+        qDebug() << "pixmaps: " << page.pixmaps;
+        paintLines(page.sceneLineShapes());
+        paintPixmaps(page.pixmaps);
     }
 }
 
-
 int TCanvas::choosedPage(QPointF& scenePoint) {
     for (int page = 0; true; page++) {
-	if (page * pageSize.height() > qAbs(scenePoint.y())) {
-	    return page - 1;
-	}
+        if (page * pageSize.height() > qAbs(scenePoint.y())) {
+            return page - 1;
+        }
     }
 }
 
 bool TCanvas::contains(const QPointF& point) const {
-    for (auto page: pages) {
-	QRectF rect = page.pageRect();
-	if (rect.contains(point)) {
-	    return true;
-	}
+    for (auto page : pages) {
+        QRectF rect = page.pageRect();
+        if (rect.contains(point)) {
+            return true;
+        }
     }
     return false;
 }
 
-void TCanvas::wheelEvent(QGraphicsSceneWheelEvent *event) {
+void TCanvas::wheelEvent(QGraphicsSceneWheelEvent* event) {
     qreal delta_y = event->delta() * 0.1;
     // this->update(QRectF());
 }
 
-QDebug operator<<(QDebug argument, const TCanvas &obj) {
-  argument.nospace() << "uuid: " << obj.uuid << "file: " << obj.name << ","
-                     << obj.pages;
-  return argument.space();
+QDebug operator<<(QDebug argument, const TCanvas& obj) {
+    argument.nospace() << "uuid: " << obj.uuid << "file: " << obj.name << ","
+                       << obj.pages;
+    return argument.space();
 }
 
-QDataStream &operator>>(QDataStream &in, TCanvas &obj) {
+QDataStream& operator>>(QDataStream& in, TCanvas& obj) {
     in >> obj.pages;
     return in;
 }
 
-QDataStream &operator<<(QDataStream &out, const TCanvas &obj) {
+QDataStream& operator<<(QDataStream& out, const TCanvas& obj) {
     out << obj.pages;
     return out;
 }
-

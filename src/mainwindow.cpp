@@ -1,11 +1,8 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 
-
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
-{
+MainWindow::MainWindow(QWidget* parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow) {
     this->showMaximized();
     ui->setupUi(this);
 
@@ -17,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 void MainWindow::setupCanvas() {
-    
+
     view = new TView(this);
     setCentralWidget(view);
     view->show();
@@ -25,18 +22,17 @@ void MainWindow::setupCanvas() {
 
 void MainWindow::setupMenu() {
 
-    connect(ui->saveBufferAction,   &QAction::triggered, this, &MainWindow::save);
-    connect(ui->openFileAction,     &QAction::triggered, this, &MainWindow::load);
-    connect(ui->saveBufferAsAction, &QAction::triggered, this, &MainWindow::saveAs);
-    connect(ui->createBufferAction, &QAction::triggered, this, &MainWindow::create);
+    connect(ui->saveBufferAction, &QAction::triggered, this, &MainWindow::save);
+    connect(ui->openFileAction, &QAction::triggered, this, &MainWindow::load);
+    connect(ui->saveBufferAsAction, &QAction::triggered, this,
+            &MainWindow::saveAs);
+    connect(ui->createBufferAction, &QAction::triggered, this,
+            &MainWindow::create);
     // connect(load, &QAction::triggered, this->view, &TView::load);
-    
 }
-
 
 void MainWindow::setupToolbar() {
 
-    
     newPageAction = new QAction;
     newPageAction->setText("new page");
     newPageAction->setChecked(false);
@@ -78,32 +74,27 @@ void MainWindow::setupToolbar() {
 }
 
 void MainWindow::load() {
-    QString name = QFileDialog::getOpenFileName
-	(this, tr("open file"), config.baseDir.absolutePath(), tr("twonote files (*.tnote)"));
+    QString name = QFileDialog::getOpenFileName(this, tr("open file"),
+                                                config.baseDir.absolutePath(),
+                                                tr("twonote files (*.tnote)"));
     view->loadFile(name);
 }
 
-void MainWindow::create() {
-    view->switchBuffer();
-}
+void MainWindow::create() { view->switchBuffer(); }
 
 void MainWindow::save() {
     if (view->currentBuffer->name.startsWith("/tmp")) {
-	saveAs();
+        saveAs();
     } else {
         view->saveBuffer("");
     }
 }
 
 void MainWindow::saveAs() {
-    QString name = QFileDialog::getSaveFileName
-	(this, tr("save file"), config.baseDir.absolutePath(), tr("twonote files (*.tnote)"));
+    QString name = QFileDialog::getSaveFileName(this, tr("save file"),
+                                                config.baseDir.absolutePath(),
+                                                tr("twonote files (*.tnote)"));
     view->saveBuffer(name);
 }
 
-
-MainWindow::~MainWindow()
-{
-    delete ui;
-    
-}
+MainWindow::~MainWindow() { delete ui; }

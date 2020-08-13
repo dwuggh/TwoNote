@@ -1,33 +1,30 @@
-#ifndef TWONOTE_CONFIG_H
-#define TWONOTE_CONFIG_H
+#pragma once
 
-#include <QString>
+#include <QColor>
+#include <QDebug>
 #include <QDir>
 #include <QSizeF>
-#include <QDebug>
-#include <QColor>
+#include <QString>
 
 struct PageView {
     QSizeF pageSize;
-    int    verticalMargin;
-    int    horizontalMargin;
+    int verticalMargin;
+    int horizontalMargin;
     QColor backgroundColor;
     QColor pageColor;
     QColor defaultPenColor;
-    qreal  defaultPenWidth;
+    qreal defaultPenWidth;
 };
 
 class Configs {
-public:
+  public:
     Configs();
     QDir tempDir;
     QDir baseDir;
     // QSizeF pageSize;
     PageView pageView;
 
-    friend QDebug operator<<(QDebug argument, const Configs &obj);
+    friend QDebug operator<<(QDebug argument, const Configs& obj);
 };
 
 extern Configs config;
-
-#endif

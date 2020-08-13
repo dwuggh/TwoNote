@@ -1,6 +1,5 @@
 #include "TPage.h"
 
-
 TPage::TPage(int pageNumber, QSizeF pageSize) {
     this->pageNumber = pageNumber;
     this->pageSize = pageSize;
@@ -9,46 +8,43 @@ TPage::TPage(int pageNumber, QSizeF pageSize) {
     // this->texts = QList<QGraphicsTextItem>();
 }
 
-QPointF TPage::mapToPage(const QPointF &scenePoint) {
-  return QPointF(scenePoint.x(),
-                 scenePoint.y() - pageNumber * pageSize.height());
+QPointF TPage::mapToPage(const QPointF& scenePoint) {
+    return QPointF(scenePoint.x(),
+                   scenePoint.y() - pageNumber * pageSize.height());
 }
 
-QPointF TPage::mapToScene(const QPointF &pagePoint) {
-  return QPointF(pagePoint.x(), pagePoint.y() + pageNumber * pageSize.height());
+QPointF TPage::mapToScene(const QPointF& pagePoint) {
+    return QPointF(pagePoint.x(),
+                   pagePoint.y() + pageNumber * pageSize.height());
 }
 
 const QRectF TPage::pageRect() {
     qreal width = pageSize.width();
     qreal height = pageSize.height();
     int margin = config.pageView.verticalMargin;
-    return QRectF(
-		  -width / 2,
-		  -height / 2 + pageNumber * ( height + margin ),
-		  width,
-		  height
-		  );
+    return QRectF(-width / 2, -height / 2 + pageNumber * (height + margin),
+                  width, height);
 }
 
 LineShapes TPage::sceneLineShapes() {
-  LineShapes sceneLines;
-  for (LineShape line : lines) {
-    LineShape sceneLine(line.width, line.color);
-    for (QPointF point : line.points) {
-      sceneLine.append(mapToScene(point));
+    LineShapes sceneLines;
+    for (LineShape line : lines) {
+        LineShape sceneLine(line.width, line.color);
+        for (QPointF point : line.points) {
+            sceneLine.append(mapToScene(point));
+        }
+        sceneLines.append(sceneLine);
     }
-    sceneLines.append(sceneLine);
-  }
-  return sceneLines;
+    return sceneLines;
 }
 
-void TPage::addLine(const LineShape &sceneLine) {
-  LineShape line(sceneLine.width, sceneLine.color);
-  for (QPointF p : sceneLine.points) {
-    line.points.append(mapToPage(p));
-  }
-  // qDebug() << "adding line" << line;
-  lines.append(line);
+void TPage::addLine(const LineShape& sceneLine) {
+    LineShape line(sceneLine.width, sceneLine.color);
+    for (QPointF p : sceneLine.points) {
+        line.points.append(mapToPage(p));
+    }
+    // qDebug() << "adding line" << line;
+    lines.append(line);
 }
 
 void TPage::addPixmap(const PixmapData& pixmapData) {
@@ -58,9 +54,8 @@ void TPage::addPixmap(const PixmapData& pixmapData) {
 }
 
 QDebug operator<<(QDebug argument, const TPage& obj) {
-    argument.nospace() << "page: " << obj.pageNumber
-                       << "lines: " << obj.lines
-		       << "pixmaps:" << obj.pixmaps;
+    argument.nospace() << "page: " << obj.pageNumber << "lines: " << obj.lines
+                       << "pixmaps:" << obj.pixmaps;
     return argument.space();
 }
 
@@ -79,8 +74,8 @@ PixmapData::PixmapData(QPixmap pixmap, QPointF position, qreal scaleX,
 
 QDebug operator<<(QDebug argument, const PixmapData& obj) {
     argument.nospace() << "pixmap: " << obj.pixmap
-		       << "position: " << obj.position
-		       << "scale: " << obj.scaleX << " " << obj.scaleY;
+                       << "position: " << obj.position
+                       << "scale: " << obj.scaleX << " " << obj.scaleY;
     return argument.space();
 }
 

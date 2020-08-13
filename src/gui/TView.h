@@ -1,24 +1,22 @@
+#pragma once
 
-#ifndef TWONOTE_TVIEW_H
-#define TWONOTE_TVIEW_H
-
-#include <QGraphicsView>
-#include <QWheelEvent>
-#include <QDebug>
-#include <QOpenGLWidget>
-#include <QFileInfo>
-#include <QFileDialog>
 #include "Configs.h"
 #include "TCanvas.h"
+#include <QDebug>
+#include <QFileDialog>
+#include <QFileInfo>
+#include <QGraphicsView>
+#include <QOpenGLWidget>
+#include <QWheelEvent>
 
 // extern Configs config;
 
 class TView : public QGraphicsView {
 
-Q_OBJECT
+    Q_OBJECT
 
-public:
-    explicit TView(QWidget *parent = nullptr);
+  public:
+    explicit TView(QWidget* parent = nullptr);
     TCanvas* currentBuffer;
     void loadFile(const QString& name);
     void saveBuffer(const QString& name = "");
@@ -29,8 +27,7 @@ public:
     void switchBuffer();
     void zoom(int ds);
 
-    
-public slots:
+  public slots:
     void enableDragMode(bool checked);
     void enableDrawMode(bool checked);
     void enableTypeMode(bool checked);
@@ -38,15 +35,13 @@ public slots:
     void newPage();
     // void load();
 
-protected:
-    void wheelEvent(QWheelEvent *) override;
+  protected:
+    void wheelEvent(QWheelEvent*) override;
 
-private:
+  private:
     QFile file;
     QString bufferName;
     qreal currentScale = 0.8;
     // treat canvases as different buffer
     QList<TCanvas*> bufferList;
 };
-
-#endif
