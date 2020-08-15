@@ -86,11 +86,11 @@ void MainWindow::save() {
     if (view->currentBuffer->name.startsWith("/tmp")) {
         saveAs();
     } else {
-        view->saveBuffer("");
+        view->saveBuffer();
     }
 }
 
-void MainWindow::saveAs() {
+inline void MainWindow::saveAs() {
     QString name = QFileDialog::getSaveFileName(this, tr("save file"),
                                                 config.baseDir.absolutePath(),
                                                 tr("twonote files (*.tnote)"));

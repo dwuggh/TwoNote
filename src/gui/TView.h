@@ -31,7 +31,6 @@ class TView : public QGraphicsView {
     void enableDragMode(bool checked);
     void enableDrawMode(bool checked);
     void enableTypeMode(bool checked);
-    void save();
     void newPage();
     // void load();
 

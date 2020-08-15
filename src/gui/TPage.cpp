@@ -53,6 +53,11 @@ void TPage::addPixmap(const PixmapData& pixmapData) {
     pixmaps.append(pixmap);
 }
 
+void TPage::addPixmap(QPixmap& pixmap, QPointF position, qreal scaleX,
+                      qreal scaleY) {
+    pixmaps.append(PixmapData(pixmap, mapToPage(position), scaleX, scaleY));
+}
+
 QDebug operator<<(QDebug argument, const TPage& obj) {
     argument.nospace() << "page: " << obj.pageNumber << "lines: " << obj.lines
                        << "pixmaps:" << obj.pixmaps;

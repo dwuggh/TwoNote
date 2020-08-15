@@ -42,6 +42,8 @@ class TPage {
     QPointF mapToPage(const QPointF& scenePoint);
     void addLine(const LineShape& sceneLine);
     void addPixmap(const PixmapData& pixmapData);
+    void addPixmap(QPixmap& pixmap, QPointF position = QPointF(0, 0),
+               qreal scaleX = 1.0, qreal scaleY = 1.0);
     const QRectF pageRect();
     LineShapes sceneLineShapes();
 

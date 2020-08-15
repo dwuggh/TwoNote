@@ -58,12 +58,6 @@ void TView::enableTypeMode(bool checked) {
     }
 }
 
-void TView::save() {
-    if (currentBuffer->name != "") {
-        currentBuffer->save();
-    }
-}
-
 void TView::loadFile(const QString& name) {
     // https://stackoverflow.com/questions/10273816/how-to-check-whether-file-exists-in-qt-in-c/40203257
     bool file_exists = QFileInfo::exists(name) && QFileInfo(name).isFile();

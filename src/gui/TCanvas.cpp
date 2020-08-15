@@ -182,35 +182,32 @@ void TCanvas::dragMoveEvent(QGraphicsSceneDragDropEvent* event) {
 void TCanvas::dropEvent(QGraphicsSceneDragDropEvent* event) {
     const QMimeData* mimeData = event->mimeData();
     // qDebug() << mimeData->hasImage();
-    if (mimeData->hasUrls()) {
-        event->setAccepted(true);
-        for (QUrl& url : mimeData->urls()) {
-            qDebug() << "dropping image: " << url;
-            if (url.isLocalFile()) {
-                QPixmap pixmap(url.toLocalFile());
-                // pixmap = pixmap.scaled(200, 100);
-                QSize pSize = pixmap.size();
-                // if the image is too large, crop it
-                QGraphicsPixmapItem* pixmapItem = addPixmap(pixmap);
-                pixmapItem->setTransformationMode(Qt::SmoothTransformation);
-                pixmapItem->setFlag(QGraphicsItem::ItemIsSelectable);
-                pixmapItem->setFlag(QGraphicsItem::ItemIsMovable);
-                pixmapItem->setPos(currentPoint);
-                qreal factor = 1;
-                if (!contains(QPointF(currentPoint.x() + pSize.width(),
-                                      currentPoint.y() + pSize.height()))) {
-                    factor = (pageSize.width() / 2 - currentPoint.x()) /
-                             pSize.width();
-                    pixmapItem->setTransform(
-                        QTransform::fromScale(factor, factor));
-                }
-                qDebug() << factor;
-                pages[currentPageNumber].addPixmap(
-                    PixmapData(pixmap, currentPoint, factor, factor));
-            }
-        }
-    } else {
+    if (!mimeData->hasUrls()) {
         event->setAccepted(false);
+        return;
+    }
+    event->setAccepted(true);
+    for (QUrl& url : mimeData->urls()) {
+        qDebug() << "dropping image: " << url;
+        if (!url.isLocalFile()) continue;
+
+        QPixmap pixmap(url.toLocalFile());
+        QSize pSize = pixmap.size();
+        // if the image is too large, crop it
+        QGraphicsPixmapItem* pixmapItem = addPixmap(pixmap);
+        pixmapItem->setTransformationMode(Qt::SmoothTransformation);
+        pixmapItem->setFlag(QGraphicsItem::ItemIsSelectable);
+        pixmapItem->setFlag(QGraphicsItem::ItemIsMovable);
+        pixmapItem->setPos(currentPoint);
+        qreal factor = 1;
+        if (!contains(QPointF(currentPoint.x() + pSize.width(),
+                              currentPoint.y() + pSize.height()))) {
+            factor = (pageSize.width() / 2 - currentPoint.x()) / pSize.width();
+            pixmapItem->setTransform(QTransform::fromScale(factor, factor));
+        }
+        qDebug() << factor;
+        pages[currentPageNumber].addPixmap(pixmap, currentPoint, factor,
+                                           factor);
     }
 }
 
