@@ -10,6 +10,7 @@
 #include <QFileInfo>
 #include <QGraphicsPathItem>
 #include <QGraphicsScene>
+#include <QGraphicsView>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneWheelEvent>
 #include <QMimeData>

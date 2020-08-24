@@ -90,9 +90,11 @@ void TCanvas::mousePressEvent(QGraphicsSceneMouseEvent* event) {
     if (!this->contains(currentPoint))
         return;
     if (state == EditState::draw && event->button() == Qt::LeftButton) {
+        for (QGraphicsView* view : this->views()) {
+            view->viewport()->setCursor(Qt::BlankCursor);
+        }
         isDrawing = true;
         qDebug() << "start at:" << currentPoint;
-        qDebug() << "size:" << sceneRect();
         lastPoint = event->scenePos();
         currentLine = LineShape(pen.widthF(), pen.color());
         currentLine.append(currentPoint);
@@ -102,6 +104,8 @@ void TCanvas::mousePressEvent(QGraphicsSceneMouseEvent* event) {
         currentPath.moveTo(currentPoint);
         currentPathItem = this->addPath(currentPath, pen);
         currentPathItem->setPen(pen);
+        currentPathItem->setFlag(QGraphicsItem::ItemIsMovable);
+        currentPathItem->setFlag(QGraphicsItem::ItemIsSelectable);
 
         // count page number when start drawing
         // if the line cross multiple pages, it still belong to the page
@@ -133,6 +137,9 @@ void TCanvas::mousePressEvent(QGraphicsSceneMouseEvent* event) {
             setFocusItem(item);
         }
     }
+    else {
+      
+    }
 }
 
 void TCanvas::mouseMoveEvent(QGraphicsSceneMouseEvent* event) {
@@ -155,6 +162,9 @@ void TCanvas::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
         isDrawing = false;
         // pages[currentPageNumber].lines.append(currentLine);
         pages[currentPageNumber].addLine(currentLine);
+        for (QGraphicsView* view : this->views()) {
+            view->viewport()->setCursor(Qt::ArrowCursor);
+        }
     }
 }
 
@@ -189,15 +199,18 @@ void TCanvas::dropEvent(QGraphicsSceneDragDropEvent* event) {
     event->setAccepted(true);
     for (QUrl& url : mimeData->urls()) {
         qDebug() << "dropping image: " << url;
-        if (!url.isLocalFile()) continue;
+        if (!url.isLocalFile())
+            continue;
 
         QPixmap pixmap(url.toLocalFile());
         QSize pSize = pixmap.size();
         // if the image is too large, crop it
         QGraphicsPixmapItem* pixmapItem = addPixmap(pixmap);
         pixmapItem->setTransformationMode(Qt::SmoothTransformation);
-        pixmapItem->setFlag(QGraphicsItem::ItemIsSelectable);
-        pixmapItem->setFlag(QGraphicsItem::ItemIsMovable);
+        pixmapItem->setFlags(QGraphicsItem::ItemIsSelectable |
+                             QGraphicsItem::ItemIsMovable |
+			     QGraphicsItem::ItemIsFocusable);
+        // pixmapItem->setFlag(QGraphicsItem::ItemIsMovable);
         pixmapItem->setPos(currentPoint);
         qreal factor = 1;
         if (!contains(QPointF(currentPoint.x() + pSize.width(),
