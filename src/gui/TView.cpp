@@ -5,7 +5,11 @@ TView::TView(QWidget* parent) : QGraphicsView(parent) {
     this->setRenderHints(QPainter::Antialiasing |
                          QPainter::SmoothPixmapTransform |
                          QPainter::HighQualityAntialiasing);
-    this->setViewport(new QOpenGLWidget);
+    QOpenGLWidget* viewport = new QOpenGLWidget;
+    QSurfaceFormat format;
+    format.setSamples(4);
+    viewport->setFormat(format);
+    this->setViewport(viewport);
     this->switchBuffer();
 
     currentScale = 0.8;

@@ -7,6 +7,7 @@
 #include <QFileInfo>
 #include <QGraphicsView>
 #include <QOpenGLWidget>
+#include <QSurfaceFormat>
 #include <QWheelEvent>
 
 // extern Configs config;
