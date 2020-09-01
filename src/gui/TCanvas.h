@@ -1,8 +1,7 @@
 #pragma once
 
 #include "Configs.h"
-#include "LineShape.h"
-#include "TPage.h"
+#include "TPageItem.h"
 #include <QDataStream>
 #include <QDateTime>
 #include <QDebug>
@@ -10,9 +9,9 @@
 #include <QFileInfo>
 #include <QGraphicsPathItem>
 #include <QGraphicsScene>
-#include <QGraphicsView>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneWheelEvent>
+#include <QGraphicsView>
 #include <QMimeData>
 #include <QPainterPath>
 #include <QSizeF>
@@ -56,21 +55,14 @@ class TCanvas : public QGraphicsScene {
     // void paintEvent(QPaintEvent *) override;
   private:
     QFile file;
-    LineShape currentLine;
-    bool isDrawing = false;
     QPointF currentPoint;
     QPointF lastPoint;
-    QPainterPath currentPath;
-    QGraphicsPathItem* currentPathItem;
     QGraphicsTextItem* item;
     QPen pen;
-    QList<TPage> pages;
+    QList<TPageItem*> pages;
     int currentPageNumber;
     int pageCounts;
     QSizeF pageSize;
-    void paintLines(const LineShapes lines);
-    void paintPixmaps(const QList<PixmapData> pixmaps);
-    void paintPages();
     bool contains(const QPointF& point) const;
     int choosedPage(QPointF& scenePoint);
     void updateSceneRect();

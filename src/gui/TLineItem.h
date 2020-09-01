@@ -1,12 +1,16 @@
+#pragma once
+
 #include <QDebug>
 #include <QGraphicsPathItem>
 #include <QList>
 #include <QPen>
 #include <QPointF>
+#include <QTransform>
 
 class TLineItem : public QGraphicsPathItem {
   public:
-    TLineItem(const QPointF& point, QGraphicsItem* parent = nullptr);
+    TLineItem(const QPointF& point = QPointF(0, 0),
+              QGraphicsItem* parent = nullptr);
     void addPoint(const QPointF& point, bool endOfLine = false);
     void refresh();
     void setPen(qreal width = 3.0, const QColor& color = QColor(Qt::black));
@@ -14,6 +18,8 @@ class TLineItem : public QGraphicsPathItem {
     friend QDebug operator<<(QDebug argument, const TLineItem& obj);
     friend QDataStream& operator>>(QDataStream& in, TLineItem& obj);
     friend QDataStream& operator<<(QDataStream& out, const TLineItem& obj);
+    friend QDataStream& operator>>(QDataStream& in, TLineItem*& obj);
+    friend QDataStream& operator<<(QDataStream& out, const TLineItem* obj);
 
   private:
     QPainterPath path;

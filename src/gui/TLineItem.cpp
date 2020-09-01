@@ -35,9 +35,14 @@ void TLineItem::addPoint(const QPointF& point, bool endOfLine) {
 }
 
 void TLineItem::refresh() {
+    qDebug() << this;
     recentPCounter = 0;
     path = QPainterPath();
+    path.moveTo(points[0]);
     int i;
+    qDebug() << points.size();
+    QList<QPointF> points = this->points;
+    this->points = QList<QPointF>();
     for (i = 0; i < points.size() - 1; i++) {
         addPoint(points[i], false);
     }
@@ -78,5 +83,18 @@ QDataStream& operator>>(QDataStream& in, TLineItem& obj) {
 QDataStream& operator<<(QDataStream& out, const TLineItem& obj) {
     const QPen& pen = obj.pen();
     out << pen.widthF() << pen.color() << obj.points;
+    return out;
+}
+
+QDataStream& operator>>(QDataStream& in, TLineItem*& obj) {
+    obj = new TLineItem;
+    in >> *obj;
+    qDebug() << obj;
+    return in;
+}
+
+QDataStream& operator<<(QDataStream& out, const TLineItem* obj) {
+    const QPen& pen = obj->pen();
+    out << pen.widthF() << pen.color() << obj->points;
     return out;
 }

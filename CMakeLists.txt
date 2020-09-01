@@ -48,6 +48,8 @@ unset (TwoNote_SOURCES)
 file (GLOB_RECURSE TwoNote_SOURCES
   src/utils/*.h
   src/utils/*.cpp
+  src/gui/TPageItem.h
+  src/gui/TPageItem.cpp
   src/gui/TLineItem.h
   src/gui/TLineItem.cpp
   src/gui/TCanvas.h
