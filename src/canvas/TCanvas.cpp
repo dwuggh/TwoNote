@@ -28,7 +28,7 @@ TCanvas::TCanvas(const QString& name, QWidget* parent) : TCanvas(parent) {
         QDataStream in(&file);
         in >> pages;
         file.close();
-        for (TPageItem* page : pages) {
+        for (TPage* page : pages) {
             this->addItem(page);
         }
         updateSceneRect();
@@ -72,7 +72,7 @@ int TCanvas::newPage() {
     int newPageIndex = pages.size();
     qDebug() << "new page for buffer:" << this->name
              << "page: " << newPageIndex;
-    TPageItem* page = new TPageItem(newPageIndex);
+    TPage* page = new TPage(newPageIndex);
     pages.append(page);
     this->addItem(page);
     // TPage& page = pages.last();

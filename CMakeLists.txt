@@ -48,18 +48,16 @@ unset (TwoNote_SOURCES)
 file (GLOB_RECURSE TwoNote_SOURCES
   src/utils/*.h
   src/utils/*.cpp
-  src/gui/TPageItem.h
-  src/gui/TPageItem.cpp
-  src/gui/TLineItem.h
-  src/gui/TLineItem.cpp
-  src/gui/TPixmapItem.h
-  src/gui/TPixmapItem.cpp
-  src/gui/TCanvas.h
-  src/gui/TCanvas.cpp
-  src/gui/TView.h
-  src/gui/TView.cpp
-  src/gui/TPage.h
-  src/gui/TPage.cpp
+  src/canvas/items/TLineItem.h
+  src/canvas/items/TLineItem.cpp
+  src/canvas/items/TPixmapItem.h
+  src/canvas/items/TPixmapItem.cpp
+  src/canvas/TCanvas.h
+  src/canvas/TCanvas.cpp
+  src/canvas/TView.h
+  src/canvas/TView.cpp
+  src/canvas/TPage.h
+  src/canvas/TPage.cpp
   src/mainwindow.ui
   src/mainwindow.h
   src/mainwindow.cpp
@@ -85,5 +83,6 @@ target_include_directories(${PROJECT_NAME} PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/src
   ${CMAKE_CURRENT_SOURCE_DIR}/src/utils
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/gui
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/canvas
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/canvas/items
   ${CMAKE_BINARY_DIR})

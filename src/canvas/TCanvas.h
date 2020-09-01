@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Configs.h"
-#include "TPageItem.h"
+#include "TPage.h"
 #include <QDataStream>
 #include <QDateTime>
 #include <QDebug>
@@ -59,7 +59,7 @@ class TCanvas : public QGraphicsScene {
     QPointF lastPoint;
     QGraphicsTextItem* item;
     QPen pen;
-    QList<TPageItem*> pages;
+    QList<TPage*> pages;
     int currentPageNumber;
     int pageCounts;
     QSizeF pageSize;
