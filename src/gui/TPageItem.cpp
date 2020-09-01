@@ -12,6 +12,10 @@ TPageItem::TPageItem(int pageNumber, QPointF centralPoint,
     setAcceptDrops(true);
 }
 
+TCanvas* TPageItem::canvas() {
+    return static_cast<TCanvas*>(scene());
+}
+
 QRectF TPageItem::boundingRect() const {
     qreal w = pageSize.width();
     qreal h = pageSize.height();
@@ -27,6 +31,7 @@ void TPageItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
 
 void TPageItem::mousePressEvent(QGraphicsSceneMouseEvent* event) {
     // qDebug() << "propagated: press, to:" << pageNumber;
+    
     if (event->button() == Qt::LeftButton) {
         QPointF p = event->scenePos() - centralPoint;
         qDebug() << p;

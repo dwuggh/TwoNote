@@ -2,6 +2,7 @@
 
 #include "Configs.h"
 #include "LineShape.h"
+#include "TCanvas.h"
 #include "TLineItem.h"
 #include "TPage.h"
 #include "TPixmapItem.h"
@@ -30,6 +31,8 @@ class TPageItem : public QGraphicsItem {
     QRectF boundingRect() const override;
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
                QWidget* widget) override;
+
+    TCanvas* canvas();
     // void addPixmap(const PixmapData& pixmapData);
     // void addPixmap(QPixmap& pixmap, QPointF position = QPointF(0, 0),
     //            qreal scaleX = 1.0, qreal scaleY = 1.0);
