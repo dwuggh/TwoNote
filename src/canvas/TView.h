@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Configs.h"
+#include "State.h"
 #include "TCanvas.h"
 #include <QDebug>
 #include <QFileDialog>

@@ -26,27 +26,49 @@ void TPage::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
 
 void TPage::mousePressEvent(QGraphicsSceneMouseEvent* event) {
     // qDebug() << "propagated: press, to:" << pageNumber;
-    
-    if (event->button() == Qt::LeftButton) {
-        QPointF p = event->scenePos() - centralPoint;
-        qDebug() << p;
-        currentLineItem = new TLineItem(p, this);
-        lineItems.append(currentLineItem);
+    switch (state.editState) {
+    case EditState::draw:
+        if (event->button() == Qt::LeftButton) {
+            QPointF p = event->scenePos() - centralPoint;
+            qDebug() << p;
+            currentLineItem = new TLineItem(p, this);
+            lineItems.append(currentLineItem);
+        }
+    case EditState::view:
+	event->accept();
+    case EditState::type:
+	// something
+	event->accept();
     }
+
 }
 
 void TPage::mouseMoveEvent(QGraphicsSceneMouseEvent* event) {
     // qDebug() << "propagated: move, to:" << pageNumber;
-    if (event->buttons() == Qt::LeftButton) {
-        currentLineItem->addPoint(event->scenePos() - centralPoint);
-        // currentLineItem->addPoint(event->scenePos());
+    switch (state.editState) {
+    case EditState::draw:
+        if (event->buttons() == Qt::LeftButton) {
+            currentLineItem->addPoint(event->scenePos() - centralPoint);
+        }
+    case EditState::view:
+        event->accept();
+    case EditState::type:
+	// something
+	event->accept();
     }
 }
 
 void TPage::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
-    if (event->button() == Qt::LeftButton) {
-        // qDebug() << "propagated: release, to:" << pageNumber;
-        currentLineItem->addPoint(event->scenePos() - centralPoint, true);
+    switch (state.editState) {
+    case EditState::draw:
+        if (event->button() == Qt::LeftButton) {
+            currentLineItem->addPoint(event->scenePos() - centralPoint, true);
+        }
+    case EditState::view:
+        event->accept();
+    case EditState::type:
+	// something
+	event->accept();
     }
 }
 
@@ -141,6 +163,6 @@ void TPage::dropEvent(QGraphicsSceneDragDropEvent* event) {
         if (!contains(QPointF(p.x() + pSize.width(), p.y() + pSize.height()))) {
             factor = (pageSize.width() / 2 - p.x()) / pSize.width();
         }
-	pixmapItems.append(new TPixmapItem(pixmap, p, factor, factor, this));
+        pixmapItems.append(new TPixmapItem(pixmap, p, factor, factor, this));
     }
 }

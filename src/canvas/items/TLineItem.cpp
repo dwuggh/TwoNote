@@ -14,8 +14,6 @@ TLineItem::TLineItem(const QPointF& point, QGraphicsItem* parent)
 void TLineItem::addPoint(const QPointF& point, bool endOfLine) {
     recentPCounter++;
     points.append(point);
-    // lastLastPoint = lastPoint;
-    // lastPoint = point;
     if (recentPCounter == 1) {
         if (endOfLine || TLineItem::squareDist(lastPoint, point) > 100 * 100) {
             path.lineTo(point);

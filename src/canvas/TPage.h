@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Configs.h"
+#include "State.h"
 #include "TLineItem.h"
 #include "TPixmapItem.h"
 #include <QGraphicsItem>

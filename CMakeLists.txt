@@ -58,6 +58,8 @@ file (GLOB_RECURSE TwoNote_SOURCES
   src/canvas/TView.cpp
   src/canvas/TPage.h
   src/canvas/TPage.cpp
+  src/canvas/State.h
+  src/canvas/State.cpp
   src/mainwindow.ui
   src/mainwindow.h
   src/mainwindow.cpp

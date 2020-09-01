@@ -83,10 +83,6 @@ int TCanvas::newPage() {
 void TCanvas::drawBackground(QPainter* painter, const QRectF& rect) {
     painter->setBrush(config.pageView.backgroundColor);
     painter->drawRect(rect);
-    // painter->setBrush(config.pageView.pageColor);
-    // for (auto page : pages) {
-    //     painter->drawRect(page->boundingRect());
-    // }
 }
 
 void TCanvas::mousePressEvent(QGraphicsSceneMouseEvent* event) {

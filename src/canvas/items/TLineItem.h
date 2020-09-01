@@ -27,5 +27,4 @@ class TLineItem : public QGraphicsPathItem {
     unsigned int recentPCounter;
     QPointF currentPoint;
     QPointF lastPoint;
-    QPointF lastLastPoint;
 };
