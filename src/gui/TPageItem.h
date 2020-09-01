@@ -4,14 +4,18 @@
 #include "LineShape.h"
 #include "TLineItem.h"
 #include "TPage.h"
+#include "TPixmapItem.h"
 #include <QGraphicsItem>
 #include <QGraphicsPathItem>
 #include <QGraphicsScene>
+#include <QGraphicsSceneDragDropEvent>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsView>
 #include <QList>
+#include <QMimeData>
 #include <QRectF>
 #include <QTransform>
+#include <QUrl>
 
 class TPageItem : public QGraphicsItem {
   public:
@@ -23,15 +27,12 @@ class TPageItem : public QGraphicsItem {
     QList<LineShape> lines;
     QList<PixmapData> pixmaps;
 
-    // QPointF mapToScene(const QPointF& pagePoint);
-    // QPointF mapToPage(const QPointF& scenePoint);
     QRectF boundingRect() const override;
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
                QWidget* widget) override;
     // void addPixmap(const PixmapData& pixmapData);
     // void addPixmap(QPixmap& pixmap, QPointF position = QPointF(0, 0),
     //            qreal scaleX = 1.0, qreal scaleY = 1.0);
-    // const QRectF pageRect();
 
     // friend QDebug operator<<(QDebug argument, const TPage& obj);
     friend QDataStream& operator>>(QDataStream& in, TPageItem& obj);
@@ -43,10 +44,15 @@ class TPageItem : public QGraphicsItem {
     void mousePressEvent(QGraphicsSceneMouseEvent*) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent*) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent*) override;
+    void dragEnterEvent(QGraphicsSceneDragDropEvent*) override;
+    void dragMoveEvent(QGraphicsSceneDragDropEvent*) override;
+    void dragLeaveEvent(QGraphicsSceneDragDropEvent*) override;
+    void dropEvent(QGraphicsSceneDragDropEvent*) override;
 
   private:
     QList<TLineItem*> lineItems;
+    QList<TPixmapItem*> pixmapItems;
     TLineItem* currentLineItem;
-    QPainterPath path;
+    QPointF currentPoint;
     // QTransform trans;
 };

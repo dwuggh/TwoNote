@@ -52,6 +52,8 @@ file (GLOB_RECURSE TwoNote_SOURCES
   src/gui/TPageItem.cpp
   src/gui/TLineItem.h
   src/gui/TLineItem.cpp
+  src/gui/TPixmapItem.h
+  src/gui/TPixmapItem.cpp
   src/gui/TCanvas.h
   src/gui/TCanvas.cpp
   src/gui/TView.h

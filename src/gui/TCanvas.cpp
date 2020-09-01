@@ -31,7 +31,7 @@ TCanvas::TCanvas(const QString& name, QWidget* parent) : TCanvas(parent) {
         for (TPageItem* page : pages) {
             this->addItem(page);
         }
-	updateSceneRect();
+        updateSceneRect();
     }
 }
 
@@ -93,7 +93,7 @@ void TCanvas::mousePressEvent(QGraphicsSceneMouseEvent* event) {
     currentPoint = event->scenePos();
     QGraphicsScene::mousePressEvent(event);
     if (!this->contains(currentPoint)) {
-	event->accept();
+        event->accept();
         return;
     }
     if (state == EditState::draw && event->button() == Qt::LeftButton) {
@@ -124,91 +124,45 @@ void TCanvas::mousePressEvent(QGraphicsSceneMouseEvent* event) {
             addItem(item);
             setFocusItem(item);
         }
-    }
-    else {
-      
+    } else {
     }
 }
 
 void TCanvas::mouseMoveEvent(QGraphicsSceneMouseEvent* event) {
     QGraphicsScene::mouseMoveEvent(event);
     if (!this->contains(event->scenePos())) {
-	event->accept();
+        event->accept();
         return;
     }
     if (event->buttons() == Qt::LeftButton) {
-	return;
+        return;
     }
 }
 
 void TCanvas::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
     QGraphicsScene::mouseReleaseEvent(event);
     if (!this->contains(event->scenePos())) {
-	event->accept();
+        event->accept();
         return;
     }
     if (event->button() == Qt::LeftButton) {
         for (QGraphicsView* view : this->views()) {
             view->viewport()->setCursor(Qt::ArrowCursor);
         }
-	return;
+        return;
     }
 }
 
 void TCanvas::dragEnterEvent(QGraphicsSceneDragDropEvent* event) {
-    qDebug() << "Scene::dragEnterEvent";
-    if (event->mimeData()->hasUrls()) {
-        event->acceptProposedAction();
-        if (contains(event->scenePos())) {
-            currentPoint = event->scenePos();
-        }
-    }
+    QGraphicsScene::dragEnterEvent(event);
 }
 
 void TCanvas::dragMoveEvent(QGraphicsSceneDragDropEvent* event) {
-    // qDebug() << "Scene::dragmoveEvent";
-    if (event->mimeData()->hasUrls()) {
-        event->acceptProposedAction();
-        // the dropEvent's event->scenePos is somewhat buggy, don't know why
-        if (contains(event->scenePos())) {
-            currentPoint = event->scenePos();
-        }
-    }
+    QGraphicsScene::dragMoveEvent(event);
 }
 
 void TCanvas::dropEvent(QGraphicsSceneDragDropEvent* event) {
-    const QMimeData* mimeData = event->mimeData();
-    // qDebug() << mimeData->hasImage();
-    if (!mimeData->hasUrls()) {
-        event->setAccepted(false);
-        return;
-    }
-    event->setAccepted(true);
-    for (QUrl& url : mimeData->urls()) {
-        qDebug() << "dropping image: " << url;
-        if (!url.isLocalFile())
-            continue;
-
-        QPixmap pixmap(url.toLocalFile());
-        QSize pSize = pixmap.size();
-        // if the image is too large, crop it
-        QGraphicsPixmapItem* pixmapItem = addPixmap(pixmap);
-        pixmapItem->setTransformationMode(Qt::SmoothTransformation);
-        pixmapItem->setFlags(QGraphicsItem::ItemIsSelectable |
-                             QGraphicsItem::ItemIsMovable |
-			     QGraphicsItem::ItemIsFocusable);
-        // pixmapItem->setFlag(QGraphicsItem::ItemIsMovable);
-        pixmapItem->setPos(currentPoint);
-        qreal factor = 1;
-        if (!contains(QPointF(currentPoint.x() + pSize.width(),
-                              currentPoint.y() + pSize.height()))) {
-            factor = (pageSize.width() / 2 - currentPoint.x()) / pSize.width();
-            pixmapItem->setTransform(QTransform::fromScale(factor, factor));
-        }
-        qDebug() << factor;
-        // pages[currentPageNumber].addPixmap(pixmap, currentPoint, factor,
-        //                                    factor);
-    }
+    QGraphicsScene::dropEvent(event);
 }
 
 inline void TCanvas::updateSceneRect() {
