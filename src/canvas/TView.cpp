@@ -3,8 +3,8 @@
 TView::TView(QWidget* parent) : QGraphicsView(parent) {
 
     this->setRenderHints(QPainter::Antialiasing |
-                         QPainter::SmoothPixmapTransform |
-                         QPainter::HighQualityAntialiasing);
+                         QPainter::SmoothPixmapTransform
+			);
     QOpenGLWidget* viewport = new QOpenGLWidget;
     QSurfaceFormat format;
     format.setSamples(4);
@@ -118,7 +118,6 @@ void TView::mouseMoveEvent(QMouseEvent* event) {
     int vy = size().height();
     int threshold = vy / 10;
     int dy = 20;
-    qDebug() << py << vy;
     if (py > vy - threshold) {
 	// qDebug() << "scroll down";
 	QScrollBar* yPos = verticalScrollBar();
