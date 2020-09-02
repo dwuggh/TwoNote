@@ -8,6 +8,7 @@
 #include <QFileInfo>
 #include <QGraphicsView>
 #include <QOpenGLWidget>
+#include <QScrollBar>
 #include <QSurfaceFormat>
 #include <QWheelEvent>
 
@@ -38,6 +39,7 @@ class TView : public QGraphicsView {
 
   protected:
     void wheelEvent(QWheelEvent*) override;
+    void mouseMoveEvent(QMouseEvent*) override;
 
   private:
     QFile file;

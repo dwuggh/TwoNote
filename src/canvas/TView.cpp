@@ -14,6 +14,9 @@ TView::TView(QWidget* parent) : QGraphicsView(parent) {
 
     currentScale = 0.8;
     setTransform(QTransform::fromScale(currentScale, currentScale));
+
+    setMouseTracking(true);
+    // viewport->setMouseTracking(true);
 }
 
 void TView::wheelEvent(QWheelEvent* event) {
@@ -112,3 +115,21 @@ void TView::switchBuffer() {
 }
 
 void TView::newPage() { currentBuffer->newPage(); }
+
+void TView::mouseMoveEvent(QMouseEvent* event) {
+    int py = event->pos().y();
+    int vy = size().height();
+    int threshold = vy / 10;
+    int dy = 20;
+    qDebug() << py << vy;
+    if (py > vy - threshold) {
+	// qDebug() << "scroll down";
+	QScrollBar* yPos = verticalScrollBar();
+	yPos->setValue(yPos->value() + dy);
+    } else if (py < threshold) {
+	// qDebug() << "scroll up";
+	QScrollBar* yPos = verticalScrollBar();
+	yPos->setValue(yPos->value() - dy);
+    }
+    QGraphicsView::mouseMoveEvent(event);
+}
