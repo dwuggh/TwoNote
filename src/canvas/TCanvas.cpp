@@ -16,7 +16,6 @@ TCanvas::TCanvas(QWidget* parent) : QGraphicsScene(parent) {
     // add one page at start
     currentPageNumber = newPage();
 
-    state = EditState::draw;
     item = nullptr;
 }
 
@@ -92,14 +91,14 @@ void TCanvas::mousePressEvent(QGraphicsSceneMouseEvent* event) {
         event->accept();
         return;
     }
-    if (state == EditState::draw && event->button() == Qt::LeftButton) {
+    if (state.editState == EditState::draw && event->button() == Qt::LeftButton) {
         for (QGraphicsView* view : this->views()) {
             view->viewport()->setCursor(Qt::BlankCursor);
         }
         return;
     }
     // add typed text
-    else if (state == EditState::type && event->button() == Qt::LeftButton) {
+    else if (state.editState == EditState::type && event->button() == Qt::LeftButton) {
 
         qDebug() << this->focusItem() << this->items().length();
         QGraphicsItem* newItem =

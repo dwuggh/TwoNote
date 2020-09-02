@@ -45,7 +45,6 @@ void TView::enableDragMode(bool checked) {
     if (checked) {
         this->setDragMode(QGraphicsView::ScrollHandDrag);
         this->setInteractive(false);
-        currentBuffer->state = EditState::view;
 	state.setView();
     }
 }
@@ -54,7 +53,6 @@ void TView::enableDrawMode(bool checked) {
     if (checked) {
         this->setDragMode(QGraphicsView::NoDrag);
         this->setInteractive(true);
-        currentBuffer->state = EditState::draw;
 	state.setDraw();
     }
 }
@@ -63,7 +61,6 @@ void TView::enableTypeMode(bool checked) {
     if (checked) {
         this->setDragMode(QGraphicsView::NoDrag);
         this->setInteractive(true);
-        currentBuffer->state = EditState::type;
 	state.setType();
     }
 }

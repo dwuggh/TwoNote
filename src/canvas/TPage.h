@@ -13,6 +13,7 @@
 #include <QList>
 #include <QMimeData>
 #include <QRectF>
+#include <QTextDocument>
 #include <QTransform>
 #include <QUrl>
 

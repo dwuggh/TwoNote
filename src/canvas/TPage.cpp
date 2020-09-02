@@ -26,21 +26,38 @@ void TPage::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
 
 void TPage::mousePressEvent(QGraphicsSceneMouseEvent* event) {
     // qDebug() << "propagated: press, to:" << pageNumber;
+    QPointF p = event->scenePos() - centralPoint;
     switch (state.editState) {
     case EditState::draw:
         if (event->button() == Qt::LeftButton) {
-            QPointF p = event->scenePos() - centralPoint;
-            qDebug() << p;
+            // qDebug() << p;
             currentLineItem = new TLineItem(p, this);
             lineItems.append(currentLineItem);
         }
+        break;
     case EditState::view:
-	event->accept();
+        event->accept();
+        break;
     case EditState::type:
-	// something
-	event->accept();
+        // something
+        event->accept();
+        for (auto item : childItems()) {
+            if (item->contains(p)) {
+                QGraphicsTextItem* text = static_cast<QGraphicsTextItem*>(item);
+                if (text) {
+                    text->setTextInteractionFlags(Qt::TextEditorInteraction);
+                    scene()->setFocusItem(text);
+                    return;
+                }
+            }
+        }
+        QGraphicsTextItem* text = new QGraphicsTextItem(this);
+        text->setDocument(new QTextDocument("", text));
+        text->setPos(p);
+        text->setTextInteractionFlags(Qt::TextEditorInteraction);
+        scene()->setFocusItem(text);
+        break;
     }
-
 }
 
 void TPage::mouseMoveEvent(QGraphicsSceneMouseEvent* event) {
@@ -50,11 +67,14 @@ void TPage::mouseMoveEvent(QGraphicsSceneMouseEvent* event) {
         if (event->buttons() == Qt::LeftButton) {
             currentLineItem->addPoint(event->scenePos() - centralPoint);
         }
+        qDebug() << event->screenPos() << event->scenePos();
+        break;
     case EditState::view:
         event->accept();
+        break;
     case EditState::type:
-	// something
-	event->accept();
+        event->accept();
+        break;
     }
 }
 
@@ -64,11 +84,13 @@ void TPage::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
         if (event->button() == Qt::LeftButton) {
             currentLineItem->addPoint(event->scenePos() - centralPoint, true);
         }
+        break;
     case EditState::view:
         event->accept();
+        break;
     case EditState::type:
-	// something
-	event->accept();
+        event->accept();
+        break;
     }
 }
 

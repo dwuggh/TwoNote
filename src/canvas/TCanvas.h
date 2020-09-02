@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Configs.h"
+#include "State.h"
 #include "TPage.h"
 #include <QDataStream>
 #include <QDateTime>
@@ -19,7 +20,7 @@
 #include <QUuid>
 #include <QWidget>
 
-enum EditState { draw, type, view };
+// enum EditState { draw, type, view };
 
 class TCanvas : public QGraphicsScene {
 
@@ -32,7 +33,6 @@ class TCanvas : public QGraphicsScene {
     QString name;
     // assign a uuid for further identification
     QUuid uuid;
-    EditState state;
 
     QString setName(const QString& name);
     void save();

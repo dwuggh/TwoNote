@@ -12,4 +12,3 @@ class State {
 };
 
 extern State state;
-State state = State();
