@@ -13,6 +13,9 @@ TCanvas::TCanvas(QWidget* parent) : QGraphicsScene(parent) {
     uuid = QUuid::createUuid();
 
     pageSize = config.pageView.pageSize;
+
+    // undo/redo utility
+    undoStack = QSharedPointer<QUndoStack>(new QUndoStack(this));
     // add one page at start
     currentPageNumber = newPage();
 
@@ -74,6 +77,7 @@ int TCanvas::newPage() {
     TPage* page = new TPage(newPageIndex);
     pages.append(page);
     this->addItem(page);
+    page->setUndoStack(undoStack);
     // TPage& page = pages.last();
     updateSceneRect();
     return newPageIndex;
@@ -82,6 +86,35 @@ int TCanvas::newPage() {
 void TCanvas::drawBackground(QPainter* painter, const QRectF& rect) {
     painter->setBrush(config.pageView.backgroundColor);
     painter->drawRect(rect);
+}
+
+void TCanvas::keyPressEvent(QKeyEvent* event) {
+    // if (event->modifiers() == Qt::ControlModifier) {
+    // 	switch (event->key())
+    // }
+    qDebug() << "press key" << event->key();
+    if (event->modifiers() == Qt::ControlModifier) {
+	switch (event->key()) {
+	case Qt::Key_Z:
+	    qDebug() << "press C-z";
+	    qDebug() << undoStack->canUndo();
+	    if (undoStack->canUndo()) undoStack->undo();
+	    break;
+	case Qt::Key_Y:
+	    qDebug() << "press C-y";
+	    if (undoStack->canRedo()) undoStack->redo();
+	    break;
+	default: ;
+	    // pass
+	}
+    }
+    // if (event->matches(QKeySequence::Undo)) {
+    // 	undoStack->undo();
+    // }
+    // else if (event->matches(QKeySequence::Redo)) {
+    // 	undoStack->redo();
+    // }
+    QGraphicsScene::keyPressEvent(event);
 }
 
 void TCanvas::mousePressEvent(QGraphicsSceneMouseEvent* event) {

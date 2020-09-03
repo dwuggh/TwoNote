@@ -4,6 +4,7 @@
 #include "State.h"
 #include "TLineItem.h"
 #include "TPixmapItem.h"
+#include <QDataStream>
 #include <QGraphicsItem>
 #include <QGraphicsPathItem>
 #include <QGraphicsScene>
@@ -13,9 +14,14 @@
 #include <QList>
 #include <QMimeData>
 #include <QRectF>
+#include <QSharedPointer>
 #include <QTextDocument>
 #include <QTransform>
+#include <QUndoCommand>
+#include <QUndoStack>
 #include <QUrl>
+
+class AddItemCommand;
 
 class TPage : public QGraphicsItem {
   public:
@@ -26,8 +32,12 @@ class TPage : public QGraphicsItem {
     QSizeF pageSize;
 
     QRectF boundingRect() const override;
+    void setUndoStack(QSharedPointer<QUndoStack> undoStack);
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
                QWidget* widget) override;
+
+    void addItem(QGraphicsItem* item);
+    void removeItem(QGraphicsItem* item);
 
     // void addPixmap(const PixmapData& pixmapData);
     // void addPixmap(QPixmap& pixmap, QPointF position = QPointF(0, 0),
@@ -53,5 +63,21 @@ class TPage : public QGraphicsItem {
     QList<TPixmapItem*> pixmapItems;
     TLineItem* currentLineItem;
     QPointF currentPoint;
+    QSharedPointer<QUndoStack> undoStack;
     // QTransform trans;
+};
+
+class AddItemCommand : public QUndoCommand {
+  public:
+    AddItemCommand(QGraphicsItem* item, TPage* page,
+                   QUndoCommand* parent = nullptr);
+
+    void undo() override;
+    void redo() override;
+
+  private:
+    QGraphicsItem* item;
+    TPage* page;
+
+    friend class TPage;
 };

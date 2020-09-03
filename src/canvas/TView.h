@@ -47,4 +47,6 @@ class TView : public QGraphicsView {
     qreal currentScale = 0.8;
     // treat canvases as different buffer
     QList<TCanvas*> bufferList;
+
+    friend class TCanvas;
 };

@@ -13,10 +13,14 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneWheelEvent>
 #include <QGraphicsView>
+#include <QKeyEvent>
 #include <QMimeData>
 #include <QPainterPath>
+#include <QSharedPointer>
 #include <QSizeF>
 #include <QTextDocument>
+#include <QUndoCommand>
+#include <QUndoStack>
 #include <QUuid>
 #include <QWidget>
 
@@ -38,12 +42,14 @@ class TCanvas : public QGraphicsScene {
     void save();
     void saveAs(const QString& name);
     int newPage();
+    // void undoRegister(TPage);
 
     friend QDebug operator<<(QDebug argument, const TCanvas& obj);
     friend QDataStream& operator>>(QDataStream& in, TCanvas& obj);
     friend QDataStream& operator<<(QDataStream& out, const TCanvas& obj);
 
   protected:
+    void keyPressEvent(QKeyEvent*) override;
     void mousePressEvent(QGraphicsSceneMouseEvent*) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent*) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent*) override;
@@ -63,6 +69,7 @@ class TCanvas : public QGraphicsScene {
     int currentPageNumber;
     int pageCounts;
     QSizeF pageSize;
+    QSharedPointer<QUndoStack> undoStack;
     bool contains(const QPointF& point) const;
     int choosedPage(QPointF& scenePoint);
     void updateSceneRect();

@@ -17,11 +17,46 @@ QRectF TPage::boundingRect() const {
     return QRectF(-w / 2, -h / 2, w, h);
 }
 
+void TPage::setUndoStack(QSharedPointer<QUndoStack> undoStack) {
+    this->undoStack = undoStack;
+}
+
 void TPage::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
                   QWidget* widget) {
     painter->drawRect(boundingRect());
     painter->setBrush(config.pageView.pageColor);
     painter->drawRect(boundingRect());
+}
+
+void TPage::addItem(QGraphicsItem* item) {
+    item->setParentItem(this);
+    if (TLineItem* line = dynamic_cast<TLineItem*>(item)) {
+        lineItems.append(line);
+        return;
+    }
+    if (TPixmapItem* pixmap = dynamic_cast<TPixmapItem*>(item)) {
+        pixmapItems.append(pixmap);
+        return;
+    }
+    if (QGraphicsTextItem* text = dynamic_cast<QGraphicsTextItem*>(item)) {
+        return;
+    }
+}
+
+void TPage::removeItem(QGraphicsItem* item) {
+    item->setParentItem(nullptr);
+    scene()->removeItem(item);
+    if (TLineItem* line = dynamic_cast<TLineItem*>(item)) {
+        lineItems.removeOne(line);
+        return;
+    }
+    if (TPixmapItem* pixmap = dynamic_cast<TPixmapItem*>(item)) {
+        pixmapItems.removeOne(pixmap);
+        return;
+    }
+    if (QGraphicsTextItem* text = dynamic_cast<QGraphicsTextItem*>(item)) {
+        return;
+    }
 }
 
 void TPage::mousePressEvent(QGraphicsSceneMouseEvent* event) {
@@ -30,9 +65,11 @@ void TPage::mousePressEvent(QGraphicsSceneMouseEvent* event) {
     switch (state.editState) {
     case EditState::draw:
         if (event->button() == Qt::LeftButton) {
-            // qDebug() << p;
+            qDebug() << p;
             currentLineItem = new TLineItem(p, this);
-            lineItems.append(currentLineItem);
+            addItem(currentLineItem);
+            auto command = new AddItemCommand(currentLineItem, this);
+            undoStack->push(command);
         }
         break;
     case EditState::view:
@@ -52,6 +89,7 @@ void TPage::mousePressEvent(QGraphicsSceneMouseEvent* event) {
             }
         }
         QGraphicsTextItem* text = new QGraphicsTextItem(this);
+        undoStack->push(new AddItemCommand(text, this));
         text->setDocument(new QTextDocument("", text));
         text->setPos(p);
         text->setTextInteractionFlags(Qt::TextEditorInteraction);
@@ -185,6 +223,20 @@ void TPage::dropEvent(QGraphicsSceneDragDropEvent* event) {
         if (!contains(QPointF(p.x() + pSize.width(), p.y() + pSize.height()))) {
             factor = (pageSize.width() / 2 - p.x()) / pSize.width();
         }
-        pixmapItems.append(new TPixmapItem(pixmap, p, factor, factor, this));
+        TPixmapItem* pixmapItem =
+            new TPixmapItem(pixmap, p, factor, factor, this);
+        pixmapItems.append(pixmapItem);
+        undoStack->push(new AddItemCommand(pixmapItem, this));
     }
 }
+
+AddItemCommand::AddItemCommand(QGraphicsItem* item, TPage* page,
+                               QUndoCommand* parent)
+    : QUndoCommand(parent) {
+    this->item = item;
+    this->page = page;
+    qDebug() << "constructing" << item << page;
+}
+
+void AddItemCommand::undo() { page->removeItem(item); }
+void AddItemCommand::redo() { page->addItem(item); }
