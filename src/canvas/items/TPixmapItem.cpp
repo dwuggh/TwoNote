@@ -1,7 +1,7 @@
 #include "TPixmapItem.h"
 
 TPixmapItem::TPixmapItem(const QPixmap& pixmap, QPointF position, qreal scaleX, qreal scaleY, QGraphicsItem* parent)
-    : QGraphicsPixmapItem(pixmap, parent), scaleX(scaleX), scaleY(scaleY) {
+    : QGraphicsPixmapItem(pixmap, parent) {
     setTransformationMode(Qt::SmoothTransformation);
     setPos(position);
     setTransform(QTransform::fromScale(scaleX, scaleY));
@@ -15,26 +15,27 @@ TPixmapItem::TPixmapItem(const QPixmap& pixmap, QPointF position, qreal scaleX, 
 QDataStream& operator>>(QDataStream& in, TPixmapItem& obj) {
     QPixmap pixmap;
     QPointF pos;
-    in >> pixmap >> pos;
+    QTransform transform;
+    in >> pixmap >> pos >> transform;
     obj.setPixmap(pixmap);
     obj.setPos(pos);
-    in >> obj.scaleX >> obj.scaleY;
+    obj.setTransform(transform);
     obj.setTransformationMode(Qt::SmoothTransformation);
-    obj.setTransform(QTransform::fromScale(obj.scaleX, obj.scaleY));
     return in;
 }
 
 QDataStream& operator<<(QDataStream& out, const TPixmapItem& obj) {
-    out << obj.pixmap() << obj.pos() << obj.scaleX << obj.scaleY;
+    out << obj.pixmap() << obj.pos() << obj.transform();
     return out;
 }
 
 QDataStream& operator>>(QDataStream& in, TPixmapItem*& obj) {
     QPixmap pixmap;
     QPointF pos;
-    qreal sx, sy;
-    in >> pixmap >> pos >> sx >> sy;
-    obj = new TPixmapItem(pixmap, pos, sx, sy);
+    QTransform transform;
+    in >> pixmap >> pos >> transform;
+    obj = new TPixmapItem(pixmap, pos);
+    obj->setTransform(transform);
     // in >> *obj;
     return in;
 }
@@ -44,16 +45,7 @@ QDataStream& operator<<(QDataStream& out, const TPixmapItem* obj) {
     return out;
 }
 
-void TPixmapItem::setScale(qreal sx, qreal sy, bool composite) {
-    if (composite) {
-        scaleX *= sx;
-        scaleY *= sy;
-        qDebug() << "set scale to:" << scaleX << scaleY;
-    } else {
-        scaleX = sx;
-        scaleY = sy;
-        qDebug() << "set scale to:" << scaleX << scaleY;
-    }
+inline void TPixmapItem::setScale(qreal sx, qreal sy, bool composite) {
     setTransform(QTransform::fromScale(sx, sy), composite);
 }
 
