@@ -53,9 +53,6 @@ class TCanvas : public QGraphicsScene {
     void mousePressEvent(QGraphicsSceneMouseEvent*) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent*) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent*) override;
-    void dragEnterEvent(QGraphicsSceneDragDropEvent*) override;
-    void dragMoveEvent(QGraphicsSceneDragDropEvent*) override;
-    void dropEvent(QGraphicsSceneDragDropEvent*) override;
     void wheelEvent(QGraphicsSceneWheelEvent*) override;
     void drawBackground(QPainter* painter, const QRectF& rect) override;
     // void paintEvent(QPaintEvent *) override;

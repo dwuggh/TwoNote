@@ -184,12 +184,6 @@ void TCanvas::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
     }
 }
 
-void TCanvas::dragEnterEvent(QGraphicsSceneDragDropEvent* event) { QGraphicsScene::dragEnterEvent(event); }
-
-void TCanvas::dragMoveEvent(QGraphicsSceneDragDropEvent* event) { QGraphicsScene::dragMoveEvent(event); }
-
-void TCanvas::dropEvent(QGraphicsSceneDragDropEvent* event) { QGraphicsScene::dropEvent(event); }
-
 inline void TCanvas::updateSceneRect() {
     int width  = pageSize.width();
     int height = pageSize.height();
