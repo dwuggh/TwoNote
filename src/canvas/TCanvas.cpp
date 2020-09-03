@@ -32,13 +32,14 @@ TCanvas::TCanvas(const QString& name, QWidget* parent) : TCanvas(parent) {
         file.close();
         for (TPage* page : pages) {
             this->addItem(page);
+            page->setUndoStack(undoStack);
         }
         updateSceneRect();
     }
 }
 
 QString TCanvas::setName(const QString& name) {
-    QString oldName = name;
+    QString oldName  = name;
     QString filename = name;
     if (QFileInfo(name).suffix() != "tnote") {
         filename = name + ".tnote";
@@ -72,8 +73,7 @@ void TCanvas::saveAs(const QString& name) {
 
 int TCanvas::newPage() {
     int newPageIndex = pages.size();
-    qDebug() << "new page for buffer:" << this->name
-             << "page: " << newPageIndex;
+    qDebug() << "new page for buffer:" << this->name << "page: " << newPageIndex;
     TPage* page = new TPage(newPageIndex);
     pages.append(page);
     this->addItem(page);
@@ -94,19 +94,23 @@ void TCanvas::keyPressEvent(QKeyEvent* event) {
     // }
     qDebug() << "press key" << event->key();
     if (event->modifiers() == Qt::ControlModifier) {
-	switch (event->key()) {
-	case Qt::Key_Z:
-	    qDebug() << "press C-z";
-	    qDebug() << undoStack->canUndo();
-	    if (undoStack->canUndo()) undoStack->undo();
-	    break;
-	case Qt::Key_Y:
-	    qDebug() << "press C-y";
-	    if (undoStack->canRedo()) undoStack->redo();
-	    break;
-	default: ;
-	    // pass
-	}
+        switch (event->key()) {
+        case Qt::Key_Z:
+            qDebug() << "press C-z";
+            qDebug() << undoStack->canUndo();
+            if (undoStack->canUndo()) {
+                undoStack->undo();
+            }
+            break;
+        case Qt::Key_Y:
+            qDebug() << "press C-y";
+            if (undoStack->canRedo()) {
+                undoStack->redo();
+            }
+            break;
+        default:;
+            // pass
+        }
     }
     // if (event->matches(QKeySequence::Undo)) {
     // 	undoStack->undo();
@@ -134,8 +138,7 @@ void TCanvas::mousePressEvent(QGraphicsSceneMouseEvent* event) {
     else if (state.editState == EditState::type && event->button() == Qt::LeftButton) {
 
         qDebug() << this->focusItem() << this->items().length();
-        QGraphicsItem* newItem =
-            itemAt(currentPoint, QTransform::fromScale(1, 1));
+        QGraphicsItem* newItem = itemAt(currentPoint, QTransform::fromScale(1, 1));
         qDebug() << newItem;
         if (static_cast<QGraphicsTextItem*>(newItem)) {
             setFocusItem(newItem);
@@ -181,25 +184,18 @@ void TCanvas::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
     }
 }
 
-void TCanvas::dragEnterEvent(QGraphicsSceneDragDropEvent* event) {
-    QGraphicsScene::dragEnterEvent(event);
-}
+void TCanvas::dragEnterEvent(QGraphicsSceneDragDropEvent* event) { QGraphicsScene::dragEnterEvent(event); }
 
-void TCanvas::dragMoveEvent(QGraphicsSceneDragDropEvent* event) {
-    QGraphicsScene::dragMoveEvent(event);
-}
+void TCanvas::dragMoveEvent(QGraphicsSceneDragDropEvent* event) { QGraphicsScene::dragMoveEvent(event); }
 
-void TCanvas::dropEvent(QGraphicsSceneDragDropEvent* event) {
-    QGraphicsScene::dropEvent(event);
-}
+void TCanvas::dropEvent(QGraphicsSceneDragDropEvent* event) { QGraphicsScene::dropEvent(event); }
 
 inline void TCanvas::updateSceneRect() {
-    int width = pageSize.width();
+    int width  = pageSize.width();
     int height = pageSize.height();
-    int size = pages.size();
+    int size   = pages.size();
     int margin = config.pageView.verticalMargin;
-    this->setSceneRect(-width / 2, -height / 2 - margin / 2, width,
-                       size * (height + margin));
+    this->setSceneRect(-width / 2, -height / 2 - margin / 2, width, size * (height + margin));
 }
 
 int TCanvas::choosedPage(QPointF& scenePoint) {
@@ -226,8 +222,7 @@ void TCanvas::wheelEvent(QGraphicsSceneWheelEvent* event) {
 }
 
 QDebug operator<<(QDebug argument, const TCanvas& obj) {
-    argument.nospace() << "uuid: " << obj.uuid << "file: " << obj.name << ","
-                       << obj.pages;
+    argument.nospace() << "uuid: " << obj.uuid << "file: " << obj.name << "," << obj.pages;
     return argument.space();
 }
 

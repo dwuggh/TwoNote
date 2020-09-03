@@ -7,7 +7,7 @@ TPage::TPage(int pageNumber, QPointF centralPoint, QGraphicsItem* parent)
     this->centralPoint = QPointF(
         0, pageNumber * (pageSize.height() + config.pageView.verticalMargin));
     this->setPos(this->centralPoint);
-    setZValue(-10);
+    setZValue(-50);
     setAcceptDrops(true);
 }
 
@@ -105,7 +105,7 @@ void TPage::mouseMoveEvent(QGraphicsSceneMouseEvent* event) {
         if (event->buttons() == Qt::LeftButton) {
             currentLineItem->addPoint(event->scenePos() - centralPoint);
         }
-        qDebug() << event->screenPos() << event->scenePos();
+        // qDebug() << event->screenPos() << event->scenePos();
         break;
     case EditState::view:
         event->accept();
