@@ -44,7 +44,7 @@ void TView::zoom(int ds) {
 void TView::enableDragMode(bool checked) {
     if (checked) {
         this->setDragMode(QGraphicsView::ScrollHandDrag);
-        this->setInteractive(false);
+        this->setInteractive(true);
 	state.setView();
     }
 }
