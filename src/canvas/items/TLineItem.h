@@ -9,7 +9,7 @@
 
 class TLineItem : public QGraphicsPathItem {
   public:
-    TLineItem(const QPointF& point = QPointF(0, 0),
+    explicit TLineItem(const QPointF& point = QPointF(0, 0),
               QGraphicsItem* parent = nullptr);
     void addPoint(const QPointF& point, bool endOfLine = false);
     void refresh();

@@ -25,23 +25,19 @@ class AddItemCommand;
 
 class TPage : public QGraphicsItem {
   public:
-    TPage(int pageNumber = 0, QPointF centralPoint = QPointF(0, 0),
+    explicit TPage(int pageNumber = 0, QPointF centralPoint = QPointF(0, 0),
           QGraphicsItem* parent = nullptr);
     int pageNumber;
     QPointF centralPoint;
     QSizeF pageSize;
 
     QRectF boundingRect() const override;
-    void setUndoStack(QSharedPointer<QUndoStack> undoStack);
+    void setUndoStack(QSharedPointer<QUndoStack>& undoStack);
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
                QWidget* widget) override;
 
     void addItem(QGraphicsItem* item);
     void removeItem(QGraphicsItem* item);
-
-    // void addPixmap(const PixmapData& pixmapData);
-    // void addPixmap(QPixmap& pixmap, QPointF position = QPointF(0, 0),
-    //            qreal scaleX = 1.0, qreal scaleY = 1.0);
 
     // friend QDebug operator<<(QDebug argument, const TPage& obj);
     friend QDataStream& operator>>(QDataStream& in, TPage& obj);

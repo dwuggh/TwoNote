@@ -140,9 +140,9 @@ void TCanvas::mousePressEvent(QGraphicsSceneMouseEvent* event) {
         qDebug() << this->focusItem() << this->items().length();
         QGraphicsItem* newItem = itemAt(currentPoint, QTransform::fromScale(1, 1));
         qDebug() << newItem;
-        if (static_cast<QGraphicsTextItem*>(newItem)) {
+        if (dynamic_cast<QGraphicsTextItem*>(newItem)) {
             setFocusItem(newItem);
-            item = static_cast<QGraphicsTextItem*>(newItem);
+            item = dynamic_cast<QGraphicsTextItem*>(newItem);
         } else {
             if (item && item->document()->isEmpty()) {
                 delete item;
@@ -185,14 +185,14 @@ void TCanvas::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
 }
 
 inline void TCanvas::updateSceneRect() {
-    int width  = pageSize.width();
-    int height = pageSize.height();
+    qreal width  = pageSize.width();
+    qreal height = pageSize.height();
     int size   = pages.size();
-    int margin = config.pageView.verticalMargin;
+    qreal margin = config.pageView.verticalMargin;
     this->setSceneRect(-width / 2, -height / 2 - margin / 2, width, size * (height + margin));
 }
 
-int TCanvas::choosedPage(QPointF& scenePoint) {
+int TCanvas::chosenPage(QPointF& scenePoint) {
     for (int page = 0; true; page++) {
         if (page * pageSize.height() > qAbs(scenePoint.y())) {
             return page - 1;

@@ -5,7 +5,7 @@ TView::TView(QWidget* parent) : QGraphicsView(parent) {
     this->setRenderHints(QPainter::Antialiasing |
                          QPainter::SmoothPixmapTransform
 			);
-    QOpenGLWidget* viewport = new QOpenGLWidget;
+    auto* viewport = new QOpenGLWidget;
     QSurfaceFormat format;
     format.setSamples(4);
     viewport->setFormat(format);
@@ -78,7 +78,7 @@ void TView::loadFile(const QString& name) {
     }
 }
 
-void TView::saveBuffer(const QString& name) {
+void TView::saveBuffer(const QString& name) const {
     if (name == "") {
         currentBuffer->save();
     } else {
@@ -111,7 +111,7 @@ void TView::switchBuffer() {
     bufferList.append(currentBuffer);
 }
 
-void TView::newPage() { currentBuffer->newPage(); }
+void TView::newPage() const { currentBuffer->newPage(); }
 
 void TView::mouseMoveEvent(QMouseEvent* event) {
     int py = event->pos().y();

@@ -22,7 +22,7 @@ class TView : public QGraphicsView {
     explicit TView(QWidget* parent = nullptr);
     TCanvas* currentBuffer;
     void loadFile(const QString& name);
-    void saveBuffer(const QString& name = "");
+    void saveBuffer(const QString& name = "") const;
     // switch buffer according to name.
     // since the name can be equal, a better practice is by uuid.
     void switchBuffer(const QString& name);
@@ -34,7 +34,7 @@ class TView : public QGraphicsView {
     void enableDragMode(bool checked);
     void enableDrawMode(bool checked);
     void enableTypeMode(bool checked);
-    void newPage();
+    void newPage() const;
     // void load();
 
   protected:

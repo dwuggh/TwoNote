@@ -32,7 +32,7 @@ class TCanvas : public QGraphicsScene {
 
   public:
     explicit TCanvas(QWidget* parent = nullptr);
-    TCanvas(const QString& name, QWidget* parent = nullptr);
+    explicit TCanvas(const QString& name, QWidget* parent = nullptr);
     // buffer name can be different from file name
     QString name;
     // assign a uuid for further identification
@@ -59,7 +59,6 @@ class TCanvas : public QGraphicsScene {
   private:
     QFile file;
     QPointF currentPoint;
-    QPointF lastPoint;
     QGraphicsTextItem* item;
     QPen pen;
     QList<TPage*> pages;
@@ -68,6 +67,6 @@ class TCanvas : public QGraphicsScene {
     QSizeF pageSize;
     QSharedPointer<QUndoStack> undoStack;
     bool contains(const QPointF& point) const;
-    int choosedPage(QPointF& scenePoint);
+    int chosenPage(QPointF& scenePoint);
     void updateSceneRect();
 };
