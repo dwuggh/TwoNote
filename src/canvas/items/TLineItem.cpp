@@ -1,24 +1,24 @@
 #include "TLineItem.h"
 
 TLineItem::TLineItem(const QPointF& point, QGraphicsItem* parent) : QGraphicsPathItem(parent) {
-    currentPoint = point;
-    path         = QPainterPath();
-    path.moveTo(point);
-    this->setPath(path);
-    recentPCounter = 0;
+    path           = QPainterPath();
     points         = QList<QPointF>();
+    recentPCounter = 0;
+    path.moveTo(point);
+    setPath(path);
     setPen();
 }
 
 void TLineItem::addPoint(const QPointF& point, bool endOfLine) {
+    if (lastPoint == point) return;
     recentPCounter++;
     points.append(point);
     if (recentPCounter == 1) {
-        if (endOfLine || TLineItem::squareDist(lastPoint, point) > 100 * 100) {
+        if (endOfLine || TLineItem::L1Dist(lastPoint, point) > 300000) {
             path.lineTo(point);
             recentPCounter = 0;
-            currentPoint   = point;
             lastPoint      = point;
+	    setPath(path);
             return;
         }
         lastPoint = point;
@@ -59,6 +59,14 @@ inline qreal TLineItem::squareDist(const QPointF& p1, const QPointF& p2) {
     qreal dx = p1.x() - p2.x();
     qreal dy = p1.y() - p2.y();
     return dx * dx + dy * dy;
+}
+
+inline qreal TLineItem::L1Dist(const QPointF& p1, const QPointF& p2) {
+    qreal dx = p1.x() - p2.x();
+    dx       = dx > 0 ? dx : -dx;
+    qreal dy = p1.y() - p2.y();
+    dy       = dy > 0 ? dy : -dy;
+    return dx + dy;
 }
 
 QDebug operator<<(QDebug argument, const TLineItem& obj) {

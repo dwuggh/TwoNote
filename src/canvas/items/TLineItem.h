@@ -14,6 +14,7 @@ class TLineItem : public QGraphicsPathItem {
     void refresh();
     void setPen(qreal width = 3.0, const QColor& color = QColor(Qt::black));
     static inline qreal squareDist(const QPointF& p1, const QPointF& p2);
+    static inline qreal L1Dist(const QPointF& p1, const QPointF& p2);
     friend QDebug operator<<(QDebug argument, const TLineItem& obj);
     friend QDataStream& operator>>(QDataStream& in, TLineItem& obj);
     friend QDataStream& operator<<(QDataStream& out, const TLineItem& obj);
@@ -24,6 +25,5 @@ class TLineItem : public QGraphicsPathItem {
     QPainterPath path;
     QList<QPointF> points;
     unsigned int recentPCounter;
-    QPointF currentPoint;
     QPointF lastPoint;
 };
