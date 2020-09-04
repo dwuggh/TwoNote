@@ -1,10 +1,13 @@
 #include "TPixmapItem.h"
 
-TPixmapItem::TPixmapItem(const QPixmap& pixmap, QPointF position, qreal scaleX, qreal scaleY, QGraphicsItem* parent)
+TPixmapItem::TPixmapItem(const QPixmap& pixmap, QPointF position, qreal scaleX, qreal scaleY,
+                         QGraphicsItem* parent)
     : QGraphicsPixmapItem(pixmap, parent) {
     setTransformationMode(Qt::SmoothTransformation);
     setPos(position);
-    setTransform(QTransform::fromScale(scaleX, scaleY));
+    beforeResizePos       = position;
+    beforeResizeTransform = QTransform::fromScale(scaleX, scaleY);
+    setTransform(beforeResizeTransform);
     setFlag(ItemIsSelectable);
     setFlag(ItemIsMovable);
     setZValue(-10);
@@ -18,7 +21,9 @@ QDataStream& operator>>(QDataStream& in, TPixmapItem& obj) {
     QTransform transform;
     in >> pixmap >> pos >> transform;
     obj.setPixmap(pixmap);
+    obj.beforeResizePos = pos;
     obj.setPos(pos);
+    obj.beforeResizeTransform = transform;
     obj.setTransform(transform);
     obj.setTransformationMode(Qt::SmoothTransformation);
     return in;
@@ -34,7 +39,9 @@ QDataStream& operator>>(QDataStream& in, TPixmapItem*& obj) {
     QPointF pos;
     QTransform transform;
     in >> pixmap >> pos >> transform;
-    obj = new TPixmapItem(pixmap, pos);
+    obj                        = new TPixmapItem(pixmap, pos);
+    obj->beforeResizeTransform = transform;
+    obj->beforeResizePos       = pos;
     obj->setTransform(transform);
     // in >> *obj;
     return in;
@@ -52,6 +59,8 @@ inline void TPixmapItem::setScale(qreal sx, qreal sy, bool composite) {
 void TPixmapItem::mousePressEvent(QGraphicsSceneMouseEvent* event) {
     const QPointF& p = event->pos();
     if (selectHandle(p) != noHandle) {
+        beforeResizeTransform = transform();
+        beforeResizePos       = pos();
         interactiveResize(p);
     } else {
         QGraphicsPixmapItem::mousePressEvent(event);
@@ -67,7 +76,11 @@ void TPixmapItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event) {
     }
 }
 
-void TPixmapItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) { QGraphicsPixmapItem::mouseReleaseEvent(event); }
+void TPixmapItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
+    undoStack->push(
+        new ResizeUndoCommand(this, beforeResizePos, pos(), beforeResizeTransform, transform()));
+    QGraphicsPixmapItem::mouseReleaseEvent(event);
+}
 
 void TPixmapItem::setupHandles() {
     const QRectF& b = boundingRect();
@@ -189,4 +202,24 @@ void TPixmapItem::hoverMoveEvent(QGraphicsSceneHoverEvent* event) {
 void TPixmapItem::hoverLeaveEvent(QGraphicsSceneHoverEvent* event) {
     setCursor(QCursor(Qt::ArrowCursor));
     QGraphicsPixmapItem::hoverLeaveEvent(event);
+}
+
+void TPixmapItem::setUndoStack(QSharedPointer<QUndoStack>& undoStack) {
+    this->undoStack = undoStack;
+}
+
+ResizeUndoCommand::ResizeUndoCommand(TPixmapItem* pixmap, const QPointF& oldPos,
+                                     const QPointF& newPos, const QTransform& oldTransform,
+                                     const QTransform& newTransform, QUndoCommand* parent)
+    : QUndoCommand(parent), pixmap(pixmap), oldPos(oldPos), newPos(newPos),
+      oldTransform(oldTransform), newTransform(newTransform) {}
+
+void ResizeUndoCommand::undo() {
+    pixmap->setTransform(oldTransform);
+    pixmap->setPos(oldPos);
+}
+
+void ResizeUndoCommand::redo() {
+    pixmap->setTransform(newTransform);
+    pixmap->setPos(newPos);
 }

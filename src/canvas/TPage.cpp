@@ -215,21 +215,20 @@ void TPage::dropEvent(QGraphicsSceneDragDropEvent* event) {
         qDebug() << "image:" << url;
         QPixmap pixmap(url.toLocalFile());
         QSize pSize = pixmap.size();
-        QPointF p = event->scenePos() - centralPoint;
+        QPointF p   = event->scenePos() - centralPoint;
         // qDebug() << p << currentPoint;
-        p = currentPoint;
+        p            = currentPoint;
         qreal factor = 1.0;
         if (!contains(QPointF(p.x() + pSize.width(), p.y() + pSize.height()))) {
             factor = (pageSize.width() / 2 - p.x()) / pSize.width();
         }
-        auto* pixmapItem =
-            new TPixmapItem(pixmap, p, factor, factor, this);
+        auto* pixmapItem = new TPixmapItem(pixmap, p, factor, factor, this);
+        pixmapItem->setUndoStack(undoStack);
         undoStack->push(new AddItemCommand(pixmapItem, this));
     }
 }
 
-AddItemCommand::AddItemCommand(QGraphicsItem* item, TPage* page,
-                               QUndoCommand* parent)
+AddItemCommand::AddItemCommand(QGraphicsItem* item, TPage* page, QUndoCommand* parent)
     : QUndoCommand(parent) {
     this->item = item;
     this->page = page;
