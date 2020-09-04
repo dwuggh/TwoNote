@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ResizeUndoCommand.h"
 #include "State.h"
 #include <QCursor>
 #include <QDataStream>
@@ -51,21 +52,4 @@ class TPixmapItem : public QGraphicsPixmapItem {
     void setupHandles();
     HandleType selectHandle(const QPointF& p);
     void interactiveResize(const QPointF& pos);
-};
-
-class ResizeUndoCommand : public QUndoCommand {
-  public:
-    ResizeUndoCommand(TPixmapItem* pixmap, const QPointF& oldPos, const QPointF& newPos,
-                      const QTransform& oldTransform, const QTransform& newTransform,
-                      QUndoCommand* parent = nullptr);
-
-    void undo() override;
-    void redo() override;
-
-  private:
-    TPixmapItem* pixmap;
-    QTransform oldTransform;
-    QTransform newTransform;
-    QPointF oldPos;
-    QPointF newPos;
 };

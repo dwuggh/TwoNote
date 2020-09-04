@@ -77,8 +77,9 @@ void TPixmapItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event) {
 }
 
 void TPixmapItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
-    undoStack->push(
-        new ResizeUndoCommand(this, beforeResizePos, pos(), beforeResizeTransform, transform()));
+    auto* cmd = new ResizeUndoCommand();
+    cmd->addItem(this, beforeResizePos, beforeResizeTransform);
+    undoStack->push(cmd);
     QGraphicsPixmapItem::mouseReleaseEvent(event);
 }
 
@@ -206,20 +207,4 @@ void TPixmapItem::hoverLeaveEvent(QGraphicsSceneHoverEvent* event) {
 
 void TPixmapItem::setUndoStack(QSharedPointer<QUndoStack>& undoStack) {
     this->undoStack = undoStack;
-}
-
-ResizeUndoCommand::ResizeUndoCommand(TPixmapItem* pixmap, const QPointF& oldPos,
-                                     const QPointF& newPos, const QTransform& oldTransform,
-                                     const QTransform& newTransform, QUndoCommand* parent)
-    : QUndoCommand(parent), pixmap(pixmap), oldPos(oldPos), newPos(newPos),
-      oldTransform(oldTransform), newTransform(newTransform) {}
-
-void ResizeUndoCommand::undo() {
-    pixmap->setTransform(oldTransform);
-    pixmap->setPos(oldPos);
-}
-
-void ResizeUndoCommand::redo() {
-    pixmap->setTransform(newTransform);
-    pixmap->setPos(newPos);
 }
