@@ -1,11 +1,10 @@
 #include "TPage.h"
 
 TPage::TPage(int pageNumber, QPointF centralPoint, QGraphicsItem* parent)
-    : QGraphicsItem(parent), pageNumber(pageNumber),
-      centralPoint(centralPoint) {
+    : QGraphicsItem(parent), pageNumber(pageNumber), centralPoint(centralPoint) {
     pageSize = config.pageView.pageSize;
-    this->centralPoint = QPointF(
-        0, pageNumber * (pageSize.height() + config.pageView.verticalMargin));
+    this->centralPoint =
+        QPointF(0, pageNumber * (pageSize.height() + config.pageView.verticalMargin));
     this->setPos(this->centralPoint);
     setZValue(-50);
     setAcceptDrops(true);
@@ -17,12 +16,9 @@ QRectF TPage::boundingRect() const {
     return QRectF(-w / 2, -h / 2, w, h);
 }
 
-void TPage::setUndoStack(QSharedPointer<QUndoStack>& undoStack) {
-    this->undoStack = undoStack;
-}
+void TPage::setUndoStack(QSharedPointer<QUndoStack>& undoStack) { this->undoStack = undoStack; }
 
-void TPage::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
-                  QWidget* widget) {
+void TPage::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) {
     painter->drawRect(boundingRect());
     painter->setBrush(config.pageView.pageColor);
     painter->drawRect(boundingRect());
@@ -67,7 +63,7 @@ void TPage::mousePressEvent(QGraphicsSceneMouseEvent* event) {
         if (event->button() == Qt::LeftButton) {
             qDebug() << p;
             currentLineItem = new TLineItem(p, this);
-//            addItem(currentLineItem);
+            //            addItem(currentLineItem);
             auto command = new AddItemCommand(currentLineItem, this);
             undoStack->push(command);
         }

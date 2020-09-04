@@ -26,3 +26,9 @@ jobs:
         cd build
         cmake .. -DCMAKE_BUILD_TYPE=Release
         make
+
+    - uses: DoozyX/clang-format-lint-action@v0.9
+      with:
+        source: './src'
+        extensions: 'h,cpp'
+        clangFormatVersion: 10

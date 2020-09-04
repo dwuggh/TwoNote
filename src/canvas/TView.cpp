@@ -2,9 +2,7 @@
 
 TView::TView(QWidget* parent) : QGraphicsView(parent) {
 
-    this->setRenderHints(QPainter::Antialiasing |
-                         QPainter::SmoothPixmapTransform
-			);
+    this->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     auto* viewport = new QOpenGLWidget;
     QSurfaceFormat format;
     format.setSamples(4);
@@ -36,8 +34,7 @@ void TView::zoom(int ds) {
     qreal factor = ds * 0.04 / 360;
     currentScale = currentScale + factor;
     // currentScale = factor;
-    qDebug() << "from" << currentScale - factor
-             << "scaling to:" << currentScale;
+    qDebug() << "from" << currentScale - factor << "scaling to:" << currentScale;
     setTransform(QTransform::fromScale(currentScale, currentScale));
 }
 
@@ -45,7 +42,7 @@ void TView::enableDragMode(bool checked) {
     if (checked) {
         this->setDragMode(QGraphicsView::ScrollHandDrag);
         this->setInteractive(true);
-	state.setView();
+        state.setView();
     }
 }
 
@@ -53,7 +50,7 @@ void TView::enableDrawMode(bool checked) {
     if (checked) {
         this->setDragMode(QGraphicsView::NoDrag);
         this->setInteractive(true);
-	state.setDraw();
+        state.setDraw();
     }
 }
 
@@ -61,7 +58,7 @@ void TView::enableTypeMode(bool checked) {
     if (checked) {
         this->setDragMode(QGraphicsView::NoDrag);
         this->setInteractive(true);
-	state.setType();
+        state.setType();
     }
 }
 
@@ -90,7 +87,7 @@ void TView::switchBuffer(const QString& name) {
     for (auto buffer : bufferList) {
         if (buffer->name == name) {
             currentBuffer = buffer;
-            bufferName = buffer->name;
+            bufferName    = buffer->name;
             this->setScene(currentBuffer);
             return;
         }
@@ -114,18 +111,18 @@ void TView::switchBuffer() {
 void TView::newPage() const { currentBuffer->newPage(); }
 
 void TView::mouseMoveEvent(QMouseEvent* event) {
-    int py = event->pos().y();
-    int vy = size().height();
+    int py        = event->pos().y();
+    int vy        = size().height();
     int threshold = vy / 10;
-    int dy = 20;
+    int dy        = 20;
     if (py > vy - threshold) {
-	// qDebug() << "scroll down";
-	QScrollBar* yPos = verticalScrollBar();
-	yPos->setValue(yPos->value() + dy);
+        // qDebug() << "scroll down";
+        QScrollBar* yPos = verticalScrollBar();
+        yPos->setValue(yPos->value() + dy);
     } else if (py < threshold) {
-	// qDebug() << "scroll up";
-	QScrollBar* yPos = verticalScrollBar();
-	yPos->setValue(yPos->value() - dy);
+        // qDebug() << "scroll up";
+        QScrollBar* yPos = verticalScrollBar();
+        yPos->setValue(yPos->value() - dy);
     }
     QGraphicsView::mouseMoveEvent(event);
 }

@@ -26,15 +26,14 @@ class AddItemCommand;
 class TPage : public QGraphicsItem {
   public:
     explicit TPage(int pageNumber = 0, QPointF centralPoint = QPointF(0, 0),
-          QGraphicsItem* parent = nullptr);
+                   QGraphicsItem* parent = nullptr);
     int pageNumber;
     QPointF centralPoint;
     QSizeF pageSize;
 
     QRectF boundingRect() const override;
     void setUndoStack(QSharedPointer<QUndoStack>& undoStack);
-    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
-               QWidget* widget) override;
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
 
     void addItem(QGraphicsItem* item);
     void removeItem(QGraphicsItem* item);
@@ -65,8 +64,7 @@ class TPage : public QGraphicsItem {
 
 class AddItemCommand : public QUndoCommand {
   public:
-    AddItemCommand(QGraphicsItem* item, TPage* page,
-                   QUndoCommand* parent = nullptr);
+    AddItemCommand(QGraphicsItem* item, TPage* page, QUndoCommand* parent = nullptr);
 
     void undo() override;
     void redo() override;

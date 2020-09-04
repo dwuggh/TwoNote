@@ -1,13 +1,12 @@
 #include "TLineItem.h"
 
-TLineItem::TLineItem(const QPointF& point, QGraphicsItem* parent)
-    : QGraphicsPathItem(parent) {
+TLineItem::TLineItem(const QPointF& point, QGraphicsItem* parent) : QGraphicsPathItem(parent) {
     currentPoint = point;
-    path = QPainterPath();
+    path         = QPainterPath();
     path.moveTo(point);
     this->setPath(path);
     recentPCounter = 0;
-    points = QList<QPointF>();
+    points         = QList<QPointF>();
     setPen();
 }
 
@@ -18,15 +17,15 @@ void TLineItem::addPoint(const QPointF& point, bool endOfLine) {
         if (endOfLine || TLineItem::squareDist(lastPoint, point) > 100 * 100) {
             path.lineTo(point);
             recentPCounter = 0;
-            currentPoint = point;
-            lastPoint = point;
+            currentPoint   = point;
+            lastPoint      = point;
             return;
         }
         lastPoint = point;
     } else if (recentPCounter == 2) {
         path.quadTo(lastPoint, point);
         recentPCounter = 0;
-        lastPoint = point;
+        lastPoint      = point;
     }
 
     this->setPath(path);
@@ -35,12 +34,12 @@ void TLineItem::addPoint(const QPointF& point, bool endOfLine) {
 void TLineItem::refresh() {
     qDebug() << this;
     recentPCounter = 0;
-    path = QPainterPath();
+    path           = QPainterPath();
     path.moveTo(points[0]);
     int i;
     qDebug() << points.size();
     QList<QPointF> points = this->points;
-    this->points = QList<QPointF>();
+    this->points          = QList<QPointF>();
     for (i = 0; i < points.size() - 1; i++) {
         addPoint(points[i], false);
     }

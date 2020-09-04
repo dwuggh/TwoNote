@@ -7,4 +7,4 @@ Language: Cpp
 DerivePointerAlignment: false
 PointerAlignment: Left
 AlignConsecutiveAssignments: true
-ColumnLimit: 120
+ColumnLimit: 100

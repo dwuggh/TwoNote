@@ -11,13 +11,13 @@ Configs::Configs() {
 
     // default page setting
     pageView = PageView{
-        .pageSize = QSizeF(1920, 3000),
-        .verticalMargin = 50,
+        .pageSize         = QSizeF(1920, 3000),
+        .verticalMargin   = 50,
         .horizontalMargin = 50,
-        .backgroundColor = QColor(Qt::gray),
-        .pageColor = QColor(Qt::white),
-        .defaultPenColor = QColor(Qt::black),
-        .defaultPenWidth = 3.0,
+        .backgroundColor  = QColor(Qt::gray),
+        .pageColor        = QColor(Qt::white),
+        .defaultPenColor  = QColor(Qt::black),
+        .defaultPenWidth  = 3.0,
     };
 
     qDebug() << *this;
@@ -25,8 +25,8 @@ Configs::Configs() {
 
 QDebug operator<<(QDebug argument, const Configs& obj) {
     argument.nospace() << "config:"
-                       << "base directory: " << obj.baseDir
-                       << "temp directory: " << obj.tempDir << "\n"
+                       << "base directory: " << obj.baseDir << "temp directory: " << obj.tempDir
+                       << "\n"
                        << "pages view config: " << obj.pageView.pageSize;
     return argument.space();
 }

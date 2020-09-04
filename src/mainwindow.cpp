@@ -1,8 +1,7 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget* parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow) {
+MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     this->showMaximized();
     ui->setupUi(this);
 
@@ -24,10 +23,8 @@ void MainWindow::setupMenu() {
 
     connect(ui->saveBufferAction, &QAction::triggered, this, &MainWindow::save);
     connect(ui->openFileAction, &QAction::triggered, this, &MainWindow::load);
-    connect(ui->saveBufferAsAction, &QAction::triggered, this,
-            &MainWindow::saveAs);
-    connect(ui->createBufferAction, &QAction::triggered, this,
-            &MainWindow::create);
+    connect(ui->saveBufferAsAction, &QAction::triggered, this, &MainWindow::saveAs);
+    connect(ui->createBufferAction, &QAction::triggered, this, &MainWindow::create);
     // connect(load, &QAction::triggered, this->view, &TView::load);
 }
 
@@ -74,9 +71,8 @@ void MainWindow::setupToolbar() {
 }
 
 void MainWindow::load() {
-    QString name = QFileDialog::getOpenFileName(this, tr("open file"),
-                                                config.baseDir.absolutePath(),
-                                                tr("twonote files (*.tnote)"));
+    QString name = QFileDialog::getOpenFileName(
+        this, tr("open file"), config.baseDir.absolutePath(), tr("twonote files (*.tnote)"));
     view->loadFile(name);
 }
 
@@ -91,9 +87,8 @@ void MainWindow::save() {
 }
 
 inline void MainWindow::saveAs() {
-    QString name = QFileDialog::getSaveFileName(this, tr("save file"),
-                                                config.baseDir.absolutePath(),
-                                                tr("twonote files (*.tnote)"));
+    QString name = QFileDialog::getSaveFileName(
+        this, tr("save file"), config.baseDir.absolutePath(), tr("twonote files (*.tnote)"));
     view->saveBuffer(name);
 }
 

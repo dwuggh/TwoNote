@@ -187,7 +187,7 @@ void TCanvas::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
 inline void TCanvas::updateSceneRect() {
     qreal width  = pageSize.width();
     qreal height = pageSize.height();
-    int size   = pages.size();
+    int size     = pages.size();
     qreal margin = config.pageView.verticalMargin;
     this->setSceneRect(-width / 2, -height / 2 - margin / 2, width, size * (height + margin));
 }
