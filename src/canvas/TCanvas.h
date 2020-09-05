@@ -1,8 +1,10 @@
 #pragma once
 
 #include "Configs.h"
+#include "TransformUndoCommand.h"
 #include "State.h"
 #include "TPage.h"
+#include "TRubberBandItem.h"
 #include <QDataStream>
 #include <QDateTime>
 #include <QDebug>

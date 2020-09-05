@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ResizeUndoCommand.h"
+#include "TransformUndoCommand.h"
 #include "State.h"
 #include <QCursor>
 #include <QDataStream>

@@ -77,7 +77,7 @@ void TPixmapItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event) {
 }
 
 void TPixmapItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
-    auto* cmd = new ResizeUndoCommand();
+    auto* cmd = new TransformUndoCommand();
     cmd->addItem(this, beforeResizePos, beforeResizeTransform);
     undoStack->push(cmd);
     QGraphicsPixmapItem::mouseReleaseEvent(event);
