@@ -19,7 +19,9 @@ TCanvas::TCanvas(QWidget* parent) : QGraphicsScene(parent) {
     // add one page at start
     currentPageNumber = newPage();
 
-    item = nullptr;
+    item         = nullptr;
+    rubberBand   = nullptr;
+    selectionCmd = nullptr;
 }
 
 TCanvas::TCanvas(const QString& name, QWidget* parent) : TCanvas(parent) {
@@ -112,6 +114,9 @@ void TCanvas::keyPressEvent(QKeyEvent* event) {
             // pass
         }
     }
+    if (event->key() == Qt::Key_Escape) {
+	this->setSelectionArea(QPainterPath());
+    }
     // if (event->matches(QKeySequence::Undo)) {
     // 	undoStack->undo();
     // }
@@ -122,66 +127,99 @@ void TCanvas::keyPressEvent(QKeyEvent* event) {
 }
 
 void TCanvas::mousePressEvent(QGraphicsSceneMouseEvent* event) {
+
+    /*
+     * 1. is the point inside pages?
+     * 2. left button or right button?
+     * 3. selecting something?
+     * 4. unfinished jobs?
+     */
+
     currentPoint = event->scenePos();
-    QGraphicsScene::mousePressEvent(event);
+    // if the point is outside of every page, perform no further action
     if (!this->contains(currentPoint)) {
         event->accept();
         return;
     }
-    if (state.editState == EditState::draw && event->button() == Qt::LeftButton) {
-        for (QGraphicsView* view : this->views()) {
-            view->viewport()->setCursor(Qt::BlankCursor);
-        }
+
+    // if select something, move it
+    groupSelection = selectedItems();
+    if (event->button() == Qt::LeftButton && groupSelection.size() != 0) {
+        selectionTransform = QTransform();
+	setSelectionCmd();
+	doingGroupSelection = true;
         return;
     }
-    // add typed text
-    else if (state.editState == EditState::type && event->button() == Qt::LeftButton) {
 
-        qDebug() << this->focusItem() << this->items().length();
-        QGraphicsItem* newItem = itemAt(currentPoint, QTransform::fromScale(1, 1));
-        qDebug() << newItem;
-        if (dynamic_cast<QGraphicsTextItem*>(newItem)) {
-            setFocusItem(newItem);
-            item = dynamic_cast<QGraphicsTextItem*>(newItem);
-        } else {
-            if (item && item->document()->isEmpty()) {
-                delete item;
-            }
-            item = new QGraphicsTextItem;
-            item->setDocument(new QTextDocument("", item));
-            // item->setTextCursor(QTextCursor());
-            item->setPos(event->scenePos());
-            item->setTextInteractionFlags(Qt::TextEditorInteraction);
-            addItem(item);
-            setFocusItem(item);
-        }
-    } else {
+    if (state.editState == EditState::draw && event->button() == Qt::LeftButton) {
+        QGraphicsScene::mousePressEvent(event);
+        return;
     }
+
+    if (event->button() == Qt::RightButton) {
+        rubberBand = new TRubberBandItem(event->scenePos());
+        addItem(rubberBand);
+        setSelectionArea(rubberBand->selectionArea());
+	return;
+    }
+    QGraphicsScene::mousePressEvent(event);
 }
 
 void TCanvas::mouseMoveEvent(QGraphicsSceneMouseEvent* event) {
-    QGraphicsScene::mouseMoveEvent(event);
     if (!this->contains(event->scenePos())) {
         event->accept();
         return;
     }
-    if (event->buttons() == Qt::LeftButton) {
-        return;
-    }
-}
 
-void TCanvas::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
-    QGraphicsScene::mouseReleaseEvent(event);
-    if (!this->contains(event->scenePos())) {
-        event->accept();
+    if (rubberBand && event->buttons() == Qt::RightButton) {
+        rubberBand->addPoint(event->scenePos());
+        setSelectionArea(rubberBand->selectionArea());
         return;
     }
-    if (event->button() == Qt::LeftButton) {
-        for (QGraphicsView* view : this->views()) {
-            view->viewport()->setCursor(Qt::ArrowCursor);
+
+    if (doingGroupSelection && event->buttons() == Qt::LeftButton) {
+	
+        QPointF p1 = event->lastScenePos();
+        QPointF p2 = event->scenePos();
+        for (auto s : groupSelection) {
+            s->setTransform(QTransform::fromTranslate(p2.x() - p1.x(), p2.y() - p1.y()), true);
         }
         return;
     }
+
+    QGraphicsScene::mouseMoveEvent(event);
+}
+
+void TCanvas::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
+    if (!this->contains(event->scenePos())) {
+        event->accept();
+        return;
+    }
+
+    if (rubberBand) {
+        delete rubberBand;
+        rubberBand = nullptr;
+        return;
+    }
+
+    if (doingGroupSelection || event->buttons() == Qt::LeftButton) {
+	
+        QPointF p1 = event->lastScenePos();
+        QPointF p2 = event->scenePos();
+        for (auto s : groupSelection) {
+            s->setTransform(QTransform::fromTranslate(p2.x() - p1.x(), p2.y() - p1.y()), true);
+        }
+	doingGroupSelection = false;
+        selectionCmd->update();
+        undoStack->push(selectionCmd);
+	selectionCmd = nullptr;
+        return;
+    }
+
+    if (event->button() == Qt::LeftButton) {
+    }
+
+    QGraphicsScene::mouseReleaseEvent(event);
 }
 
 inline void TCanvas::updateSceneRect() {
@@ -208,6 +246,22 @@ bool TCanvas::contains(const QPointF& point) const {
         }
     }
     return false;
+}
+
+void TCanvas::setSelectionCmd(bool refresh) {
+    if (selectionCmd) {
+        if (refresh) {
+            qDebug() << "deleting" << selectionCmd;
+            delete selectionCmd;
+        } else {
+            qDebug() << "detected" << selectionCmd << ", TCanvas::setSelectionCmd terminated";
+            return;
+        }
+    }
+    selectionCmd   = new TransformUndoCommand;
+    for (auto s : groupSelection) {
+        selectionCmd->registerItem(s);
+    }
 }
 
 void TCanvas::wheelEvent(QGraphicsSceneWheelEvent* event) {

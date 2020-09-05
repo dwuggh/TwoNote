@@ -39,6 +39,7 @@ class TCanvas : public QGraphicsScene {
     QString name;
     // assign a uuid for further identification
     QUuid uuid;
+    QSizeF pageSize;
 
     QString setName(const QString& name);
     void save();
@@ -57,18 +58,24 @@ class TCanvas : public QGraphicsScene {
     void mouseReleaseEvent(QGraphicsSceneMouseEvent*) override;
     void wheelEvent(QGraphicsSceneWheelEvent*) override;
     void drawBackground(QPainter* painter, const QRectF& rect) override;
+
+    QList<TPage*> pages;
+    QSharedPointer<QUndoStack> undoStack;
+    void setSelectionCmd(bool refresh = false);
+    bool contains(const QPointF& point) const;
+    int chosenPage(QPointF& scenePoint);
+    void updateSceneRect();
     // void paintEvent(QPaintEvent *) override;
   private:
     QFile file;
     QPointF currentPoint;
     QGraphicsTextItem* item;
     QPen pen;
-    QList<TPage*> pages;
+    TRubberBandItem* rubberBand;
+    bool doingGroupSelection = false;
+    QList<QGraphicsItem*> groupSelection;
     int currentPageNumber;
     int pageCounts;
-    QSizeF pageSize;
-    QSharedPointer<QUndoStack> undoStack;
-    bool contains(const QPointF& point) const;
-    int chosenPage(QPointF& scenePoint);
-    void updateSceneRect();
+    QTransform selectionTransform;
+    TransformUndoCommand* selectionCmd;
 };

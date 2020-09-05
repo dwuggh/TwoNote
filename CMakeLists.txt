@@ -48,10 +48,12 @@ unset (TwoNote_SOURCES)
 file (GLOB_RECURSE TwoNote_SOURCES
   src/utils/*.h
   src/utils/*.cpp
-  src/canvas/items/ResizeUndoCommand.h
-  src/canvas/items/ResizeUndoCommand.cpp
+  src/canvas/items/TransformUndoCommand.h
+  src/canvas/items/TransformUndoCommand.cpp
   src/canvas/items/TLineItem.h
   src/canvas/items/TLineItem.cpp
+  src/canvas/items/TRubberBandItem.h
+  src/canvas/items/TRubberBandItem.cpp
   src/canvas/items/TPixmapItem.h
   src/canvas/items/TPixmapItem.cpp
   src/canvas/TCanvas.h

@@ -62,6 +62,7 @@ void TPage::mousePressEvent(QGraphicsSceneMouseEvent* event) {
     case EditState::draw:
         if (event->button() == Qt::LeftButton) {
             qDebug() << p;
+	    setCursor(Qt::BlankCursor);
             currentLineItem = new TLineItem(p, this);
             //            addItem(currentLineItem);
             auto command = new AddItemCommand(currentLineItem, this);
@@ -118,6 +119,7 @@ void TPage::mouseReleaseEvent(QGraphicsSceneMouseEvent* event) {
         if (event->button() == Qt::LeftButton) {
             currentLineItem->addPoint(event->scenePos() - centralPoint, true);
         }
+	setCursor(Qt::ArrowCursor);
         break;
     case EditState::view:
         event->accept();

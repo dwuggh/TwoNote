@@ -7,6 +7,9 @@ TLineItem::TLineItem(const QPointF& point, QGraphicsItem* parent) : QGraphicsPat
     path.moveTo(point);
     setPath(path);
     setPen();
+    setFlag(ItemIsSelectable);
+    // setFlag(ItemIsMovable);
+    setZValue(0);
 }
 
 void TLineItem::addPoint(const QPointF& point, bool endOfLine) {
@@ -14,7 +17,8 @@ void TLineItem::addPoint(const QPointF& point, bool endOfLine) {
     recentPCounter++;
     points.append(point);
     if (recentPCounter == 1) {
-        if (endOfLine || TLineItem::L1Dist(lastPoint, point) > 300000) {
+	qreal dist = TLineItem::L1Dist(lastPoint, point);
+        if (endOfLine || dist > 1000 || dist < 10) {
             path.lineTo(point);
             recentPCounter = 0;
             lastPoint      = point;
