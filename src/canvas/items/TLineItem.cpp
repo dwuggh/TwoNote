@@ -6,9 +6,8 @@ TLineItem::TLineItem(const QPointF& point, QGraphicsItem* parent) : QGraphicsPat
     recentPCounter = 0;
     path.moveTo(point);
     setPath(path);
-    setPen();
+    this->setPen(state.pen);
     setFlag(ItemIsSelectable);
-    // setFlag(ItemIsMovable);
     setZValue(0);
 }
 
@@ -50,15 +49,6 @@ void TLineItem::refresh() {
     addPoint(points[i], true);
 }
 
-void TLineItem::setPen(qreal width, const QColor& color) {
-    this->pen();
-    QPen pen;
-    pen.setWidthF(width);
-    pen.setColor(color);
-    pen.setJoinStyle(Qt::PenJoinStyle::RoundJoin);
-    QAbstractGraphicsShapeItem::setPen(pen);
-}
-
 inline qreal TLineItem::squareDist(const QPointF& p1, const QPointF& p2) {
     qreal dx = p1.x() - p2.x();
     qreal dy = p1.y() - p2.y();
@@ -84,7 +74,7 @@ QDataStream& operator>>(QDataStream& in, TLineItem& obj) {
     qreal width;
     QColor color;
     in >> width >> color >> obj.points;
-    obj.setPen(width, color);
+    // obj.setPen(width, color);
     obj.refresh();
     return in;
 }

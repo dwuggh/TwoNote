@@ -1,5 +1,6 @@
 #pragma once
 
+#include "State.h"
 #include <QDebug>
 #include <QGraphicsPathItem>
 #include <QList>
@@ -12,7 +13,6 @@ class TLineItem : public QGraphicsPathItem {
     explicit TLineItem(const QPointF& point = QPointF(0, 0), QGraphicsItem* parent = nullptr);
     virtual void addPoint(const QPointF& point, bool endOfLine = false);
     void refresh();
-    void setPen(qreal width = 3.0, const QColor& color = QColor(Qt::black));
     static inline qreal squareDist(const QPointF& p1, const QPointF& p2);
     static inline qreal L1Dist(const QPointF& p1, const QPointF& p2);
     friend QDebug operator<<(QDebug argument, const TLineItem& obj);

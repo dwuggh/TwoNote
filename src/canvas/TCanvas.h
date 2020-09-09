@@ -51,6 +51,9 @@ class TCanvas : public QGraphicsScene {
     friend QDataStream& operator>>(QDataStream& in, TCanvas& obj);
     friend QDataStream& operator<<(QDataStream& out, const TCanvas& obj);
 
+    void setColor(const QColor& color);
+    void setWidth(qreal width);
+
   protected:
     void keyPressEvent(QKeyEvent*) override;
     void mousePressEvent(QGraphicsSceneMouseEvent*) override;

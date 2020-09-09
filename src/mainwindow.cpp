@@ -8,7 +8,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     // this->showFullScreen();
 
     this->setupCanvas();
-    this->setupToolbar();
+    // this->setupToolbar();
+    addToolBar(new TToolBar);
     this->setupMenu();
 }
 

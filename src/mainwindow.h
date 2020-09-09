@@ -3,6 +3,7 @@
 #include "Configs.h"
 #include "TCanvas.h"
 #include "TView.h"
+#include "TToolBar.h"
 #include <QActionGroup>
 #include <QFileDialog>
 #include <QMainWindow>

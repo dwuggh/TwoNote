@@ -264,6 +264,14 @@ void TCanvas::setSelectionCmd(bool refresh) {
     }
 }
 
+void TCanvas::setColor(const QColor& color) {
+    state.pen.setColor(color);
+}
+
+void TCanvas::setWidth(qreal width) {
+    state.pen.setWidthF(width);
+}
+
 void TCanvas::wheelEvent(QGraphicsSceneWheelEvent* event) {
     qreal delta_y = event->delta() * 0.1;
     // this->update(QRectF());

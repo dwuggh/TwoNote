@@ -64,6 +64,8 @@ file (GLOB_RECURSE TwoNote_SOURCES
   src/canvas/TPage.cpp
   src/canvas/State.h
   src/canvas/State.cpp
+  src/gui/TToolBar.cpp
+  src/gui/TToolBar.h
   src/mainwindow.ui
   src/mainwindow.h
   src/mainwindow.cpp
@@ -88,7 +90,19 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${QT_LIBRARY})
 target_include_directories(${PROJECT_NAME} PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/src
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/assets
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/gui
   ${CMAKE_CURRENT_SOURCE_DIR}/src/utils
   ${CMAKE_CURRENT_SOURCE_DIR}/src/canvas
   ${CMAKE_CURRENT_SOURCE_DIR}/src/canvas/items
   ${CMAKE_BINARY_DIR})
+
+
+set (source "${CMAKE_SOURCE_DIR}/src/assets")
+set (destination "${CMAKE_CURRENT_BINARY_DIR}/assets")
+add_custom_command(
+    TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E create_symlink ${source} ${destination} 
+    DEPENDS ${destination}
+    COMMENT "symbolic link resources folder from ${source} => ${destination}"
+)
