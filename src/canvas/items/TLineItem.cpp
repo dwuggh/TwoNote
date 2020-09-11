@@ -71,17 +71,20 @@ QDebug operator<<(QDebug argument, const TLineItem& obj) {
 }
 
 QDataStream& operator>>(QDataStream& in, TLineItem& obj) {
-    qreal width;
-    QColor color;
-    in >> width >> color >> obj.points;
-    // obj.setPen(width, color);
+    QPen pen;
+    QPointF pos;
+    QTransform transform;
+    in >> pen >> pos >> transform >> obj.points;
+    obj.setPen(pen);
+    obj.setPos(pos);
+    obj.setTransform(transform);
     obj.refresh();
     return in;
 }
 
 QDataStream& operator<<(QDataStream& out, const TLineItem& obj) {
     const QPen& pen = obj.pen();
-    out << pen.widthF() << pen.color() << obj.points;
+    out << obj.pen() << obj.pos() << obj.transform() << obj.points;
     return out;
 }
 
@@ -93,7 +96,6 @@ QDataStream& operator>>(QDataStream& in, TLineItem*& obj) {
 }
 
 QDataStream& operator<<(QDataStream& out, const TLineItem* obj) {
-    const QPen& pen = obj->pen();
-    out << pen.widthF() << pen.color() << obj->points;
+    out << *obj;
     return out;
 }
